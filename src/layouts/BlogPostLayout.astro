@@ -1,0 +1,85 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Prose from '../components/site/Prose.astro';
+import TagList from '../components/site/TagList.astro';
+import { AUTHOR_NAME, SITE_TITLE, SITE_URL } from '../consts';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { title, description, date, updated, tags } = post.data;
+const slug = post.data.slug ?? post.id;
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const canonical = new URL(`/blog/${slug}/`, Astro.site);
+const ogImage = `/og/blog/${slug}.png`;
+const ogImageUrl = new URL(ogImage, Astro.site);
+const published = date.toISOString();
+const modified = (updated ?? date).toISOString();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  image: ogImageUrl.toString(),
+  datePublished: published,
+  dateModified: modified,
+  author: {
+    '@type': 'Person',
+    name: AUTHOR_NAME,
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Person',
+    name: AUTHOR_NAME,
+    url: SITE_URL,
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonical.toString(),
+  },
+  url: canonical.toString(),
+  ...(tags.length ? { keywords: tags.join(', ') } : {}),
+  isPartOf: {
+    '@type': 'Blog',
+    name: `${SITE_TITLE} Blog`,
+    url: new URL('/blog/', Astro.site).toString(),
+  },
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogType="article"
+  image={ogImage}
+  imageAlt={title}
+  publishedTime={published}
+  modifiedTime={modified}
+  tags={tags}
+  jsonLd={jsonLd}
+>
+  <article>
+    <header class="mb-8">
+      <p class="text-sm text-muted-foreground">
+        <time datetime={published}>{formattedDate}</time>
+      </p>
+      <h1 class="mt-1 text-3xl font-semibold tracking-tight">{title}</h1>
+      <div class="mt-4">
+        <TagList tags={tags} />
+      </div>
+    </header>
+    <Prose>
+      <slot />
+    </Prose>
+  </article>
+</BaseLayout>

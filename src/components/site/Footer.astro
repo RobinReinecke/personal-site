@@ -1,0 +1,18 @@
+---
+import { SOCIAL_LINKS } from '../../consts';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-border">
+  <div
+    class="mx-auto flex max-w-2xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+  >
+    <p>&copy; {year} Robin Reinecke</p>
+    <div class="flex gap-4">
+      <a href={SOCIAL_LINKS.github} class="transition-colors hover:text-brand">GitHub</a>
+      <a href={SOCIAL_LINKS.linkedin} class="transition-colors hover:text-brand">LinkedIn</a>
+      <a href="/rss.xml" class="transition-colors hover:text-brand">RSS</a>
+    </div>
+  </div>
+</footer>

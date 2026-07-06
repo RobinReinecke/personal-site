@@ -1,0 +1,85 @@
+name: Draft social posts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/content/blog/**'
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        post: ${{ fromJson(needs.changed-posts.outputs.posts) }}
+    needs: changed-posts
+    if: needs.changed-posts.outputs.posts != '[]'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Generate drafts
+        env:
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+        run: pnpm exec tsx scripts/social/generate-drafts.ts "${{ matrix.post }}"
+
+      - name: Open review issue
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const draft = JSON.parse(fs.readFileSync('social-draft-output.json', 'utf-8'));
+
+            const devtoLine = draft.devto
+              ? `- [ ] Publish dev.to draft: ${draft.devto.editUrl}`
+              : `- [ ] Create dev.to draft manually (DEVTO_API_KEY not configured)`;
+
+            const body = [
+              `New post ready to cross-post: **${draft.title}**`,
+              `${draft.url}`,
+              '',
+              '### LinkedIn (copy-paste)',
+              '```',
+              draft.linkedin,
+              '```',
+              '',
+              '### Checklist',
+              '- [ ] Post to LinkedIn',
+              devtoLine,
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Social drafts: ${draft.title}`,
+              body,
+              labels: ['social-draft'],
+            });
+
+  changed-posts:
+    runs-on: ubuntu-latest
+    outputs:
+      posts: ${{ steps.list.outputs.posts }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+
+      - id: list
+        run: |
+          CHANGED=$(git diff --name-only --diff-filter=AM HEAD~1 HEAD -- 'src/content/blog/*.md' 'src/content/blog/*.mdx')
+          PUBLISHED=$(echo "$CHANGED" | xargs -I{} sh -c 'grep -qE "^draft: *true" "{}" || echo "{}"')
+          FILES=$(echo "$PUBLISHED" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "posts=$FILES" >> "$GITHUB_OUTPUT"

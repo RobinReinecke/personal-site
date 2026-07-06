@@ -1,0 +1,65 @@
+---
+interface Props {
+  text: string;
+  class?: string;
+  speed?: number;
+  startDelay?: number;
+}
+
+const { text, class: className, speed = 28, startDelay = 300 } = Astro.props;
+---
+
+<p class={className} data-typewriter data-text={text} data-speed={speed} data-delay={startDelay}>
+  {text}
+</p>
+
+<script>
+  function initTypewriter(el: HTMLElement) {
+    const text = el.dataset.text ?? '';
+    const speed = Number(el.dataset.speed ?? 28);
+    const delay = Number(el.dataset.delay ?? 300);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // lock in the height of the fully rendered text before clearing it, so
+    // typing in the shorter intermediate strings never shifts the layout
+    el.style.minHeight = `${el.offsetHeight}px`;
+
+    if (reducedMotion) return;
+
+    el.textContent = '';
+    el.classList.add('typewriter-cursor');
+
+    let i = 0;
+    function tick() {
+      el.textContent = text.slice(0, i);
+      i++;
+      if (i <= text.length) {
+        setTimeout(tick, speed);
+      } else {
+        el.classList.remove('typewriter-cursor');
+      }
+    }
+    setTimeout(tick, delay);
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-typewriter]').forEach(initTypewriter);
+</script>
+
+<style>
+  .typewriter-cursor::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 2px;
+    background: currentColor;
+    vertical-align: -0.15em;
+    animation: typewriter-blink 0.9s steps(1) infinite;
+  }
+
+  @keyframes typewriter-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+</style>

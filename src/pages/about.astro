@@ -1,0 +1,223 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Badge from '../components/ui/badge.astro';
+import Separator from '../components/ui/separator.astro';
+import { JOB_TITLE, SOCIAL_LINKS } from '../consts';
+
+const experience = [
+  {
+    role: 'Senior Software Engineer',
+    org: 'E.ON Digital Technology',
+    period: 'Apr 2025 - Present',
+    points: [
+      'Lead engineer for an international, internal payment application handling payment requests across markets.',
+      'Set engineering standards within an expertise group, enabling cross-functional product teams to deliver secure, efficient, high-performance software.',
+    ],
+  },
+  {
+    role: 'Cloud Software Engineer',
+    org: 'Volkswagen Financial Services',
+    period: 'Nov 2023 - Mar 2025',
+    points: [
+      'Designed, implemented, and optimized cloud software integrating AI capabilities into core business processes.',
+      'Built scalable data pipelines, backend services, and user interfaces.',
+    ],
+  },
+  {
+    role: 'Full Stack Developer',
+    org: 'Volkswagen Financial Services',
+    period: 'Oct 2021 - Oct 2023',
+    points: [
+      'Led the technical migration of a legacy, large-scale web application to Angular.',
+      'Established CI/CD pipelines to automate deployment workflows.',
+      'Mentored apprentices and students, establishing engineering best practices within the team.',
+    ],
+  },
+  {
+    role: 'Software Development Intern',
+    org: 'Volkswagen Financial Services',
+    period: 'Aug 2018 - Sep 2021',
+    points: [
+      'Worked across web development, network security, cloud engineering, and IT architecture in an agile setting.',
+      'Built a foundational UI toolkit used for corporate and partner websites.',
+      'Extended a central JavaScript library integrated into global vehicle configurators across all Volkswagen brands.',
+      'Built an end-to-end monitoring tool tracking the performance of global REST endpoints.',
+    ],
+  },
+  {
+    role: 'Software Engineer',
+    org: 'Funke Mediengruppe GmbH & Co. KGaA',
+    period: 'Jan 2018 - Jun 2018',
+    points: [
+      'Developed and maintained a custom web application integrated with an SAP backend for the logistics department.',
+      'Contributed to a migration project merging two separate SAP systems.',
+    ],
+  },
+  {
+    role: 'IT Professional for Software Development (Fachinformatiker für Anwendungsentwicklung)',
+    org: 'Funke Mediengruppe GmbH & Co. KGaA',
+    period: 'Sep 2015 - Jan 2018',
+    points: [
+      'Managed full-lifecycle software projects: requirements analysis, system design, implementation, and testing.',
+      'Completed the standard 3-year apprenticeship in 2.5 years, graduating with a final grade of 1.0.',
+    ],
+  },
+  {
+    role: 'Software Development Intern',
+    org: 'Siemens',
+    period: 'Feb 2013',
+    points: [],
+  },
+];
+
+const education = [
+  {
+    degree: 'Master of Science (M.Sc.), Computer Science - IT Security',
+    school: 'Technische Universität Braunschweig',
+    period: 'Oct 2021 - Oct 2023',
+    grade: 'Grade: 1.4',
+    thesis:
+      'Thesis: "Defending against Web Cache Deception: Devising and Evaluating Countermeasures"',
+    electives:
+      'Electives: Computer Networks Internship, Cloud Computing Internship, Software Quality 2, Software Architecture, Data Warehousing & Data Mining, Web Security, Distributed Data Management, Pattern Recognition, Machine Learning for IT Security, Management of Information Security, Hacklab, Seclab',
+  },
+  {
+    degree: 'Bachelor of Science (B.Sc.), Computer Science',
+    school: 'Technische Universität Braunschweig',
+    period: 'Oct 2018 - Sep 2021',
+    grade: 'Grade: 1.4',
+    thesis:
+      'Thesis: "On the Feasibility of In- and Out-of-Band JavaScript Anti-Debugging Detection and Prevention"',
+    electives:
+      'Electives: Cloud Computing, Human-Computer Interaction, Web-based Systems, Computer Graphics, Computer Organization and Design, Software Quality 1',
+  },
+];
+
+const awards = [
+  { name: 'Deutschlandstipendium 2022/2023', org: 'Technische Universität Braunschweig' },
+  { name: 'Deutschlandstipendium 2020/2021', org: 'Technische Universität Braunschweig' },
+  { name: 'Deutschlandstipendium 2019/2020', org: 'Technische Universität Braunschweig' },
+  { name: 'Herausragende Leistung in der Ausbildung', org: 'IHK Braunschweig' },
+];
+
+const skills = [
+  'Web Security',
+  'Full-Stack Development',
+  'Cloud-Native Architecture',
+  'TypeScript',
+  'Angular',
+  'Node.js',
+  'REST APIs',
+  'CI/CD',
+  'Distributed Systems',
+  'SAP Integration',
+  'Technical Leadership',
+];
+---
+
+<BaseLayout title="About">
+  <header class="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+    <div class="shrink-0 rounded-full bg-gradient-to-br from-brand to-brand/40 p-1">
+      <img
+        src="/profile.jpg"
+        alt="Robin Reinecke"
+        width="96"
+        height="96"
+        class="h-24 w-24 rounded-full border-2 border-background object-cover"
+      />
+    </div>
+    <div>
+      <h1 class="text-3xl font-semibold tracking-tight">
+        Robin Reinecke<span class="text-brand">.</span>
+      </h1>
+      <p class="mt-1 text-muted-foreground">{JOB_TITLE}</p>
+      <div class="mt-3 flex flex-wrap gap-3 text-sm">
+        <a href={`mailto:${SOCIAL_LINKS.email}`} class="link-underline text-brand">Email</a>
+        <a href={SOCIAL_LINKS.github} class="link-underline text-brand">GitHub</a>
+        <a href={SOCIAL_LINKS.linkedin} class="link-underline text-brand">LinkedIn</a>
+      </div>
+    </div>
+  </header>
+
+  <p class="mt-8 max-w-2xl text-muted-foreground">
+    Senior Software Engineer with a Master of Science in Computer Science, specializing in web
+    security. Experience with full-stack development, cloud-native architecture, and technical
+    leadership of international applications. Three-time recipient of the Deutschlandstipendium for
+    academic excellence. Focused on engineering secure, scalable infrastructure and replacing
+    operational complexity with clean, maintainable code.
+  </p>
+
+  <Separator class="my-10" />
+
+  <section>
+    <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">Experience</h2>
+    <div class="mt-6 flex flex-col gap-8">
+      {
+        experience.map((job) => (
+          <div>
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="font-semibold">{job.role}</h3>
+              <p class="text-sm text-muted-foreground">{job.period}</p>
+            </div>
+            <p class="text-sm text-brand">{job.org}</p>
+            {job.points.length > 0 && (
+              <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+                {job.points.map((point) => (
+                  <li>{point}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <Separator class="my-10" />
+
+  <section>
+    <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">Skills</h2>
+    <div class="mt-6 flex flex-wrap gap-2">
+      {skills.map((skill) => <Badge>{skill}</Badge>)}
+    </div>
+  </section>
+
+  <Separator class="my-10" />
+
+  <section>
+    <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">Education</h2>
+    <div class="mt-6 flex flex-col gap-6">
+      {
+        education.map((school) => (
+          <div>
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="font-semibold">{school.degree}</h3>
+              <p class="text-sm text-muted-foreground">{school.period}</p>
+            </div>
+            <p class="text-sm text-brand">
+              {school.school} · {school.grade}
+            </p>
+            <p class="mt-2 text-sm text-muted-foreground">{school.thesis}</p>
+            <p class="mt-1 text-sm text-muted-foreground">{school.electives}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <Separator class="my-10" />
+
+  <section>
+    <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">Awards</h2>
+    <div class="mt-6 flex flex-col gap-3">
+      {
+        awards.map((award) => (
+          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <p class="font-medium">{award.name}</p>
+            <p class="text-sm text-muted-foreground">{award.org}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,114 @@
+---
+import '../styles/global.css';
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import NetworkBackground from '../components/site/NetworkBackground.astro';
+import EasterEggs from '../components/site/EasterEggs.astro';
+import Terminal from '../components/site/Terminal.astro';
+import Seo from '../components/site/Seo.astro';
+import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Open Graph object type. Blog posts pass 'article'. */
+  ogType?: 'website' | 'article';
+  /** Preview image, root-relative or absolute. Defaults to the site card. */
+  image?: string;
+  imageAlt?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  tags?: string[];
+  noindex?: boolean;
+  /** JSON-LD structured data object(s) injected into <head>. */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description = SITE_DESCRIPTION,
+  ogType = 'website',
+  image = DEFAULT_OG_IMAGE,
+  imageAlt,
+  publishedTime,
+  modifiedTime,
+  tags,
+  noindex = false,
+  jsonLd,
+} = Astro.props;
+
+const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#1a9d8b" />
+    <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <title>{pageTitle}</title>
+
+    <Seo
+      title={pageTitle}
+      description={description}
+      canonical={canonical}
+      image={ogImage}
+      imageAlt={imageAlt}
+      type={ogType}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      tags={tags}
+      noindex={noindex}
+    />
+
+    {
+      jsonLdBlocks.map((block) => (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(block).replace(/</g, '\\u003c')}
+        />
+      ))
+    }
+
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = stored ? stored === 'dark' : prefersDark;
+        document.documentElement.classList.toggle('dark', isDark);
+      })();
+    </script>
+
+    {
+      import.meta.env.PROD && umamiWebsiteId && (
+        <script
+          is:inline
+          defer
+          src="https://analytics.robinreinecke.de/script.js"
+          data-website-id={umamiWebsiteId}
+        />
+      )
+    }
+  </head>
+  <body class="bg-background">
+    <NetworkBackground />
+    <EasterEggs />
+    <Terminal />
+    <div class="relative z-10 flex min-h-screen flex-col">
+      <Header />
+      <main class="mx-auto w-full max-w-2xl flex-1 px-4 py-12">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>

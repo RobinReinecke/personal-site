@@ -1,0 +1,30 @@
+---
+import { cn } from '../../lib/utils';
+
+interface Props {
+  href?: string;
+  variant?: 'default' | 'outline' | 'ghost';
+  class?: string;
+}
+
+const { href, variant = 'default', class: className } = Astro.props;
+const Tag = href ? 'a' : 'button';
+
+const variants = {
+  default: 'bg-brand text-brand-foreground hover:brightness-110',
+  outline:
+    'border border-border bg-transparent hover:border-brand/50 hover:bg-accent hover:text-accent-foreground',
+  ghost: 'hover:bg-accent hover:text-accent-foreground',
+};
+---
+
+<Tag
+  href={href}
+  class={cn(
+    'inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-all hover:-translate-y-0.5',
+    variants[variant],
+    className
+  )}
+>
+  <slot />
+</Tag>

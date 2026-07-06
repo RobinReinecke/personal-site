@@ -1,0 +1,337 @@
+---
+import { JOB_TITLE, SITE_DESCRIPTION, SOCIAL_LINKS } from '../../consts';
+---
+
+<div
+  id="terminal-overlay"
+  class="fixed inset-0 z-50 hidden items-start justify-center bg-black/50 px-4 pt-24 backdrop-blur-sm sm:items-center sm:pt-4"
+  data-title={JOB_TITLE}
+  data-tagline={SITE_DESCRIPTION}
+  data-email={SOCIAL_LINKS.email}
+  data-github={SOCIAL_LINKS.github}
+  data-linkedin={SOCIAL_LINKS.linkedin}
+>
+  <div
+    id="terminal-panel"
+    class="flex max-h-[70vh] w-full max-w-xl flex-col overflow-hidden rounded-lg border border-border bg-card shadow-lg"
+  >
+    <div class="flex items-center justify-between border-b border-border px-4 py-2">
+      <p class="font-mono text-xs text-muted-foreground">guest@robinreinecke:~</p>
+      <button
+        id="terminal-close"
+        type="button"
+        aria-label="Close terminal"
+        class="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+          <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div id="terminal-output" class="flex-1 overflow-y-auto px-4 py-3 font-mono text-sm">
+      <p class="text-muted-foreground">Type 'help' to get started. Esc to close.</p>
+    </div>
+
+    <div class="flex items-center gap-2 border-t border-border px-4 py-3">
+      <span class="font-mono text-sm text-brand">&gt;</span>
+      <input
+        id="terminal-input"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+        class="flex-1 bg-transparent font-mono text-sm text-foreground outline-none"
+      />
+    </div>
+  </div>
+</div>
+
+<script>
+  const overlay = document.getElementById('terminal-overlay');
+  const output = document.getElementById('terminal-output');
+  const input = document.getElementById('terminal-input');
+  const closeBtn = document.getElementById('terminal-close');
+
+  if (overlay && output && input instanceof HTMLInputElement && closeBtn) {
+    const inputEl: HTMLInputElement = input;
+    const title = overlay.dataset.title ?? '';
+    const tagline = overlay.dataset.tagline ?? '';
+    const email = overlay.dataset.email ?? '';
+    const github = overlay.dataset.github ?? '';
+    const linkedin = overlay.dataset.linkedin ?? '';
+
+    const pages: Record<string, string> = {
+      home: '/',
+      '~': '/',
+      '/': '/',
+      blog: '/blog',
+      about: '/about',
+    };
+
+    const initialOutputHTML = output.innerHTML;
+    const history: string[] = [];
+    let historyIndex = -1;
+
+    // Minimal markdown: # / ## / ### headings, **bold**, *italic*, `code`, - bullets.
+    function renderInline(text: string): DocumentFragment {
+      const frag = document.createDocumentFragment();
+      const pattern = /\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`/g;
+      let lastIndex = 0;
+      let match: RegExpExecArray | null;
+
+      while ((match = pattern.exec(text))) {
+        if (match.index > lastIndex) {
+          frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+        }
+        if (match[1] !== undefined) {
+          const strong = document.createElement('strong');
+          strong.className = 'font-semibold text-foreground';
+          strong.textContent = match[1];
+          frag.appendChild(strong);
+        } else if (match[2] !== undefined) {
+          const em = document.createElement('em');
+          em.className = 'italic';
+          em.textContent = match[2];
+          frag.appendChild(em);
+        } else if (match[3] !== undefined) {
+          const code = document.createElement('code');
+          code.className = 'rounded bg-muted px-1 py-0.5 text-xs text-brand';
+          code.textContent = match[3];
+          frag.appendChild(code);
+        }
+        lastIndex = pattern.lastIndex;
+      }
+      if (lastIndex < text.length) {
+        frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+      }
+      return frag;
+    }
+
+    function renderLine(raw: string): HTMLElement {
+      const el = document.createElement('p');
+      let content = raw;
+
+      if (raw.startsWith('### ')) {
+        el.className = 'mt-2 font-semibold text-brand';
+        content = raw.slice(4);
+      } else if (raw.startsWith('## ')) {
+        el.className = 'mt-2 text-base font-bold';
+        content = raw.slice(3);
+      } else if (raw.startsWith('# ')) {
+        el.className = 'mt-2 text-lg font-bold';
+        content = raw.slice(2);
+      } else if (raw.startsWith('- ')) {
+        el.className = 'pl-4';
+        content = `• ${raw.slice(2)}`;
+      }
+
+      el.appendChild(renderInline(content));
+      return el;
+    }
+
+    function print(text: string, className = '') {
+      for (const rawLine of text.split('\n')) {
+        const line = renderLine(rawLine);
+        if (className) line.classList.add(...className.split(' '));
+        output?.appendChild(line);
+      }
+      if (output) output.scrollTop = output.scrollHeight;
+    }
+
+    function printRaw(text: string, className = '') {
+      const line = document.createElement('p');
+      line.textContent = text;
+      if (className) line.className = className;
+      output?.appendChild(line);
+      if (output) output.scrollTop = output.scrollHeight;
+    }
+
+    function resetTerminal() {
+      if (output) output.innerHTML = initialOutputHTML;
+      inputEl.value = '';
+      history.length = 0;
+      historyIndex = -1;
+    }
+
+    function open() {
+      overlay?.classList.remove('hidden');
+      overlay?.classList.add('flex');
+      inputEl.focus();
+    }
+
+    function close() {
+      overlay?.classList.add('hidden');
+      overlay?.classList.remove('flex');
+      resetTerminal();
+    }
+
+    function runCommand(raw: string) {
+      const trimmed = raw.trim();
+      printRaw(`> ${trimmed}`, 'text-brand');
+      if (!trimmed) return;
+
+      const [cmd, ...args] = trimmed.split(/\s+/);
+
+      switch (cmd) {
+        case 'help':
+          print(
+            [
+              '## Available commands',
+              '',
+              '- **help** show this list',
+              '- **whoami** who are you?',
+              '- **ls** list what is here',
+              '- **cat** `<file>` read a file',
+              '- **cd** `<page>` go to a page (home, blog, about)',
+              '- **otter** you know what this does',
+              "- **coffee** get's you a coffee",
+              '- **clear** clear the screen',
+              '- **exit** close this terminal',
+              '',
+              '*Tip: not everything is listed here. Some commands just exist.*',
+            ].join('\n')
+          );
+          break;
+        case 'whoami':
+          print("You're an awesome visitor of robinreinecke.de. Hope you're having a great day!");
+          break;
+        case 'ls':
+          if (args[0] === '-a') {
+            print('about/  blog/  contact.txt  facts.txt  home/  todo.txt  .secret');
+          } else {
+            print('about/  blog/  contact.txt  facts.txt  home/  todo.txt');
+          }
+          break;
+        case 'cat':
+          switch (args[0]) {
+            case 'contact.txt':
+              print([`email: ${email}`, `github: ${github}`, `linkedin: ${linkedin}`].join('\n'));
+              break;
+            case 'facts.txt':
+              print(
+                [
+                  `- Tagline of this site: *${tagline}*`,
+                  '- My master thesis defended against Web Cache Deception. Think about that next time you hit refresh.',
+                  '- I finished a 3 year apprenticeship in 2.5. Efficiency is a personality trait at this point.',
+                  '- Otters hold hands while sleeping so they do not drift apart. Best pairing algorithm in nature.',
+                  `- Officially: **${title}**. Unofficially: a guy who really likes otters.`,
+                ].join('\n')
+              );
+              break;
+            case 'todo.txt':
+              print(
+                [
+                  '- [x] Build this website',
+                  '- [x] Add a terminal nobody asked for',
+                  '- [ ] Convince an otter to review my code',
+                  '- [ ] Get some sleep',
+                ].join('\n')
+              );
+              break;
+            case '.secret':
+              printRaw('Gur pbzznaq lbh jnag vf haybpx. Gur xrl vf gur lrne guvf fvgr jrag yvir.');
+              break;
+            default:
+              print(`cat: ${args[0] ?? ''}: No such file`, 'text-muted-foreground');
+          }
+          break;
+        case 'cd': {
+          const target = args[0] ? pages[args[0]] : undefined;
+          if (target) {
+            print(`Navigating to ${target} ...`);
+            setTimeout(() => {
+              window.location.href = target;
+            }, 400);
+          } else {
+            print(`cd: ${args[0] ?? ''}: No such page`, 'text-muted-foreground');
+          }
+          break;
+        }
+        case 'coffee':
+          print("Nice try. Coffee's on me if we ever meet.");
+          break;
+        case 'unlock':
+          if (args[0] === '2026') {
+            print(
+              [
+                '### Nice work.',
+                '',
+                'You actually decoded that. Here is your reward:',
+                '',
+                '`flag{c1ph3r_curious_otter}`',
+                '',
+                'Screenshot it, tell me about it, whatever makes you happy.',
+              ].join('\n')
+            );
+            window.dispatchEvent(new CustomEvent('otter-easter-egg'));
+          } else {
+            print('Not quite. Keep trying.', 'text-muted-foreground');
+          }
+          break;
+        case 'otter':
+          print('Splish splash.');
+          window.dispatchEvent(new CustomEvent('otter-easter-egg'));
+          break;
+        case 'clear':
+          if (output) output.innerHTML = '';
+          break;
+        case 'exit':
+          close();
+          break;
+        default:
+          print(
+            `command not found: ${cmd}. Type 'help' for a list of commands.`,
+            'text-muted-foreground'
+          );
+      }
+    }
+
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) close();
+    });
+
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const value = inputEl.value;
+        runCommand(value);
+        if (value.trim()) {
+          history.push(value);
+          historyIndex = history.length;
+        }
+        inputEl.value = '';
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (historyIndex > 0) {
+          historyIndex--;
+          inputEl.value = history[historyIndex] ?? '';
+        }
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (historyIndex < history.length - 1) {
+          historyIndex++;
+          inputEl.value = history[historyIndex] ?? '';
+        } else {
+          historyIndex = history.length;
+          inputEl.value = '';
+        }
+      } else if (e.key === 'Escape') {
+        close();
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      const active = document.activeElement;
+      const isTyping = active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement;
+      if (e.key === '/' && !isTyping) {
+        e.preventDefault();
+        open();
+      }
+    });
+
+    window.addEventListener('toggle-terminal', () => {
+      if (overlay.classList.contains('hidden')) open();
+      else close();
+    });
+  }
+</script>

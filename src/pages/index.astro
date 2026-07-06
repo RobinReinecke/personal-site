@@ -1,0 +1,86 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/site/PostCard.astro';
+import Button from '../components/ui/button.astro';
+import TypingText from '../components/site/TypingText.astro';
+import {
+  AUTHOR_NAME,
+  JOB_TITLE,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+  SITE_URL,
+  SOCIAL_LINKS,
+} from '../consts';
+
+const heroText =
+  'I engineer secure, scalable software, from international systems to cloud native platforms, and aim for clean, maintainable code.';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_TITLE,
+    url: SITE_URL,
+    description: SITE_DESCRIPTION,
+    inLanguage: 'en',
+    author: { '@type': 'Person', name: AUTHOR_NAME },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: AUTHOR_NAME,
+    url: SITE_URL,
+    image: new URL('/profile.jpg', SITE_URL).toString(),
+    jobTitle: 'Senior Software Engineer',
+    description: SITE_DESCRIPTION,
+    sameAs: [SOCIAL_LINKS.github, SOCIAL_LINKS.linkedin, SOCIAL_LINKS.devto],
+  },
+];
+---
+
+<BaseLayout jsonLd={jsonLd}>
+  <section class="relative mb-16 overflow-hidden rounded-2xl">
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-brand/30 blur-3xl"
+    >
+    </div>
+
+    <div class="relative flex flex-col items-start gap-6 py-8 sm:flex-row sm:items-center">
+      <div class="shrink-0 rounded-full bg-gradient-to-br from-brand to-brand/40 p-1">
+        <img
+          src="/profile.jpg"
+          alt="Robin Reinecke"
+          width="112"
+          height="112"
+          class="h-28 w-28 rounded-full border-2 border-background object-cover"
+        />
+      </div>
+      <div>
+        <h1 class="text-3xl font-semibold tracking-tight">
+          Robin Reinecke<span class="text-brand">.</span>
+        </h1>
+        <p class="mt-1 text-sm font-medium text-brand">{JOB_TITLE}</p>
+        <TypingText text={heroText} class="mt-3 max-w-md text-muted-foreground" />
+        <div class="mt-5 flex gap-3">
+          <Button href="/blog">Read the blog</Button>
+          <Button href="/about" variant="outline">About me</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="mb-4 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+      Recent posts
+    </h2>
+    <div class="flex flex-col gap-4">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+  </section>
+</BaseLayout>

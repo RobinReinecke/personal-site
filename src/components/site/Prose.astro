@@ -1,0 +1,19 @@
+---
+import { cn } from '../../lib/utils';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div
+  class={cn(
+    'prose max-w-none prose-neutral dark:prose-invert',
+    'prose-headings:font-semibold prose-a:text-brand prose-a:no-underline hover:prose-a:underline prose-blockquote:border-brand prose-code:font-mono',
+    className
+  )}
+>
+  <slot />
+</div>

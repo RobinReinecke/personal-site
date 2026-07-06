@@ -1,0 +1,11 @@
+# If you are reading this file, you are already my kind of visitor.
+# Found something before I did? I would genuinely like to know.
+# Bonus points if your report also tells me how you found this file.
+#
+# If you like puzzles more than paperwork: open this site's terminal
+# (press / or the icon in the header) and try ls -a.
+
+Contact: mailto:mail@robinreinecke.de
+Expires: 2027-07-02T00:00:00.000Z
+Preferred-Languages: en, de
+Canonical: https://robinreinecke.de/.well-known/security.txt

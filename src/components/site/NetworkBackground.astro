@@ -1,0 +1,170 @@
+---
+
+---
+
+<canvas
+  id="network-background"
+  class="pointer-events-none fixed inset-0 h-full w-full opacity-40 dark:opacity-50"
+  aria-hidden="true"></canvas>
+
+<script>
+  (function initNetworkBackground() {
+    const canvasEl = document.getElementById('network-background');
+    if (!(canvasEl instanceof HTMLCanvasElement)) return;
+    const canvas: HTMLCanvasElement = canvasEl;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    const ctx: CanvasRenderingContext2D = context;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const LINK_DISTANCE = 140;
+    const SPEED = 0.15;
+    const REPEL_RADIUS = 110;
+    const REPEL_STRENGTH = 3;
+    const PULSE_RADIUS = 220;
+    const PULSE_DURATION = 700;
+    const PULSE_STRENGTH = 16;
+
+    interface Node {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+    }
+
+    interface Pulse {
+      x: number;
+      y: number;
+      start: number;
+    }
+
+    let width = 0;
+    let height = 0;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let nodes: Node[] = [];
+    let pulses: Pulse[] = [];
+    let rafId = 0;
+    let mouseX = -9999;
+    let mouseY = -9999;
+
+    function isDark() {
+      return document.documentElement.classList.contains('dark');
+    }
+
+    function colors() {
+      return isDark()
+        ? { node: 'rgba(94, 234, 212, 0.55)', line: 'rgba(94, 234, 212,' }
+        : { node: 'rgba(15, 118, 110, 0.45)', line: 'rgba(15, 118, 110,' };
+    }
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const count = Math.min(90, Math.max(24, Math.floor((width * height) / 16000)));
+      nodes = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * SPEED,
+        vy: (Math.random() - 0.5) * SPEED,
+      }));
+    }
+
+    function step() {
+      const { node, line } = colors();
+      ctx.clearRect(0, 0, width, height);
+
+      const now = performance.now();
+      pulses = pulses.filter((p) => now - p.start < PULSE_DURATION);
+
+      for (const n of nodes) {
+        n.x += n.vx;
+        n.y += n.vy;
+        if (n.x < 0 || n.x > width) n.vx *= -1;
+        if (n.y < 0 || n.y > height) n.vy *= -1;
+
+        const dx = n.x - mouseX;
+        const dy = n.y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < REPEL_RADIUS && dist > 0.01) {
+          const force = (1 - dist / REPEL_RADIUS) * REPEL_STRENGTH;
+          n.x = Math.max(0, Math.min(width, n.x + (dx / dist) * force));
+          n.y = Math.max(0, Math.min(height, n.y + (dy / dist) * force));
+        }
+
+        for (const p of pulses) {
+          const pdx = n.x - p.x;
+          const pdy = n.y - p.y;
+          const pdist = Math.sqrt(pdx * pdx + pdy * pdy);
+          if (pdist < PULSE_RADIUS && pdist > 0.01) {
+            const decay = Math.max(0, 1 - (now - p.start) / PULSE_DURATION);
+            const pforce = decay * PULSE_STRENGTH * (1 - pdist / PULSE_RADIUS);
+            n.x = Math.max(0, Math.min(width, n.x + (pdx / pdist) * pforce));
+            n.y = Math.max(0, Math.min(height, n.y + (pdy / pdist) * pforce));
+          }
+        }
+      }
+
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i];
+          const b = nodes[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < LINK_DISTANCE) {
+            const alpha = (1 - dist / LINK_DISTANCE) * 0.6;
+            ctx.strokeStyle = `${line}${alpha})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      ctx.fillStyle = node;
+      for (const n of nodes) {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function loop() {
+      step();
+      rafId = requestAnimationFrame(loop);
+    }
+
+    resize();
+    loop();
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+    window.addEventListener('click', (e) => {
+      pulses.push({ x: e.clientX, y: e.clientY, start: performance.now() });
+    });
+    window.addEventListener('mouseleave', () => {
+      mouseX = -9999;
+      mouseY = -9999;
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        cancelAnimationFrame(rafId);
+      } else {
+        rafId = requestAnimationFrame(loop);
+      }
+    });
+  })();
+</script>

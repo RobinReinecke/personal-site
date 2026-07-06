@@ -1,0 +1,125 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --radius: 0.75rem;
+  --background: oklch(0.99 0.004 90);
+  --foreground: oklch(0.2 0.012 90);
+  --card: oklch(1 0.003 90);
+  --card-foreground: oklch(0.2 0.012 90);
+  --popover: oklch(1 0.003 90);
+  --popover-foreground: oklch(0.2 0.012 90);
+  --primary: oklch(0.22 0.015 90);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.96 0.006 90);
+  --secondary-foreground: oklch(0.22 0.015 90);
+  --muted: oklch(0.96 0.006 90);
+  --muted-foreground: oklch(0.5 0.015 90);
+  --accent: oklch(0.96 0.006 90);
+  --accent-foreground: oklch(0.22 0.015 90);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.9 0.008 90);
+  --input: oklch(0.9 0.008 90);
+  --ring: oklch(0.7 0.1 175);
+
+  /* brand: teal, river/otter inspired accent */
+  --brand: oklch(0.6 0.13 175);
+  --brand-foreground: oklch(0.99 0 0);
+  --brand-soft: oklch(0.94 0.045 175);
+  --brand-soft-foreground: oklch(0.3 0.08 175);
+}
+
+.dark {
+  --background: oklch(0.19 0.012 90);
+  --foreground: oklch(0.96 0.006 90);
+  --card: oklch(0.23 0.014 90);
+  --card-foreground: oklch(0.96 0.006 90);
+  --popover: oklch(0.23 0.014 90);
+  --popover-foreground: oklch(0.96 0.006 90);
+  --primary: oklch(0.93 0.01 90);
+  --primary-foreground: oklch(0.22 0.015 90);
+  --secondary: oklch(0.29 0.015 90);
+  --secondary-foreground: oklch(0.96 0.006 90);
+  --muted: oklch(0.29 0.015 90);
+  --muted-foreground: oklch(0.68 0.015 90);
+  --accent: oklch(0.29 0.015 90);
+  --accent-foreground: oklch(0.96 0.006 90);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.72 0.13 175);
+
+  --brand: oklch(0.72 0.13 175);
+  --brand-foreground: oklch(0.16 0.02 175);
+  --brand-soft: oklch(0.32 0.05 175);
+  --brand-soft-foreground: oklch(0.88 0.06 175);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-soft-foreground: var(--brand-soft-foreground);
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background font-sans text-foreground;
+  }
+}
+
+@layer components {
+  .link-underline {
+    position: relative;
+    text-decoration: none;
+  }
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+  }
+  .link-underline:hover::after {
+    transform: scaleX(1);
+  }
+}

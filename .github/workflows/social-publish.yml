@@ -1,0 +1,78 @@
+name: Publish social post
+
+on:
+  workflow_dispatch:
+    inputs:
+      post_slug:
+        description: 'Slug of the post to publish (e.g. 2026-06-28-what-i-look-for-in-code-review)'
+        required: true
+      devto:
+        description: 'Flip the matching dev.to draft to published'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Resolve post file
+        id: resolve
+        run: |
+          FILE=$(grep -rlE "^slug: *${{ inputs.post_slug }}$" src/content/blog/ || true)
+          if [ -z "$FILE" ]; then
+            FILE=$(find src/content/blog -type f \( -name "${{ inputs.post_slug }}.md" -o -name "${{ inputs.post_slug }}.mdx" \))
+          fi
+          if [ -z "$FILE" ]; then
+            echo "Could not find a post matching slug '${{ inputs.post_slug }}'" >&2
+            exit 1
+          fi
+          echo "file=$FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Publish dev.to draft
+        if: inputs.devto
+        env:
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+        run: pnpm exec tsx scripts/social/publish.ts "${{ steps.resolve.outputs.file }}"
+
+      - name: Comment and close review issue
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'social-draft',
+              state: 'open',
+            });
+            const issue = issues.find((i) => i.body?.includes(`${{ inputs.post_slug }}`));
+            if (!issue) {
+              core.warning('No matching open social-draft issue found to close.');
+              return;
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `Published via workflow_dispatch. dev.to: ${{ inputs.devto }}`,
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              state: 'closed',
+            });
