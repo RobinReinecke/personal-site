@@ -1,6 +1,9 @@
 services:
   site:
-    build: .
+    build:
+      context: .
+      args:
+        PUBLIC_UMAMI_WEBSITE_ID: ${PUBLIC_UMAMI_WEBSITE_ID:-}
     image: robinreinecke-site:latest
     container_name: robinreinecke-site
     restart: unless-stopped
