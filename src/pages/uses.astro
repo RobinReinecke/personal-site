@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Separator from '../components/ui/separator.astro';
+
+// A "uses" page — the tools, hardware, and software I rely on.
+// Convention: https://uses.tech
+// Keep this current when the setup meaningfully changes.
+const categories = [
+  {
+    title: 'Editor & Terminal',
+    items: [
+      { name: 'VS Code', note: 'primary editor, with a deliberately minimal set of extensions.' },
+      { name: 'zsh', note: 'shell of choice, kept fast and unclever.' },
+      { name: 'Monaspace Neon', note: 'the font I stare at all day.' },
+    ],
+  },
+  {
+    title: 'Languages & Tools',
+    items: [
+      { name: 'TypeScript', note: 'default for almost everything I build.' },
+      { name: 'Node.js', note: 'backend services and tooling.' },
+      { name: 'Angular', note: 'from years of large-scale frontend work.' },
+      { name: 'Docker', note: 'how I package and ship most things.' },
+    ],
+  },
+  {
+    title: 'This Site',
+    items: [
+      { name: 'Astro', note: 'static-first framework, ships almost no JavaScript.' },
+      { name: 'Tailwind CSS', note: 'utility-first styling with a small design system on top.' },
+      { name: 'Caddy', note: 'reverse proxy with automatic HTTPS.' },
+      { name: 'Umami', note: 'privacy-friendly, self-hosted analytics.' },
+      { name: 'Self-hosted', note: 'runs on my own home server.' },
+    ],
+  },
+  {
+    title: 'Hardware',
+    items: [
+      { name: 'Home server', note: 'good old friend' },
+      { name: 'Mechanical keyboard', note: 'because the feedback matters.' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Uses"
+  description="The hardware, software, and tools Robin Reinecke uses day to day."
+>
+  <header>
+    <h1 class="text-3xl font-semibold tracking-tight">
+      Uses<span class="text-brand">.</span>
+    </h1>
+    <p class="mt-2 max-w-2xl text-muted-foreground">
+      The tools I reach for every day. Inspired by <a
+        href="https://uses.tech"
+        class="link-underline text-brand">uses.tech</a
+      >.
+    </p>
+  </header>
+
+  <Separator class="my-10" />
+
+  <div class="flex flex-col gap-8">
+    {
+      categories.map((category) => (
+        <section>
+          <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+            {category.title}
+          </h2>
+          <ul class="mt-3 flex flex-col gap-2 text-muted-foreground">
+            {category.items.map((item) => (
+              <li>
+                <span class="font-medium text-foreground">{item.name}</span> - {item.note}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
