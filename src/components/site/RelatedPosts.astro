@@ -1,0 +1,53 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  /** Maximum number of related posts to show. */
+  limit?: number;
+}
+
+const { post, limit = 3 } = Astro.props;
+const currentSlug = post.data.slug ?? post.id;
+const currentTags = new Set(post.data.tags);
+
+const related = (await getCollection('blog', ({ data }) => !data.draft))
+  .filter((candidate) => (candidate.data.slug ?? candidate.id) !== currentSlug)
+  .map((candidate) => ({
+    post: candidate,
+    shared: candidate.data.tags.filter((tag) => currentTags.has(tag)).length,
+  }))
+  .filter((candidate) => candidate.shared > 0)
+  // Most shared tags first, then newest.
+  .sort((a, b) => b.shared - a.shared || b.post.data.date.valueOf() - a.post.data.date.valueOf())
+  .slice(0, limit)
+  .map((candidate) => candidate.post);
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+{
+  related.length > 0 && (
+    <section aria-label="Related posts" class="mt-16 border-t border-border pt-10">
+      <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+        Related posts
+      </h2>
+      <ul class="mt-6 flex flex-col gap-5">
+        {related.map((item) => {
+          const slug = item.data.slug ?? item.id;
+          return (
+            <li>
+              <a href={`/blog/${slug}`} class="group block">
+                <p class="text-sm text-muted-foreground">{formatDate(item.data.date)}</p>
+                <p class="mt-0.5 font-medium transition-colors group-hover:text-brand">
+                  {item.data.title}
+                </p>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  )
+}
