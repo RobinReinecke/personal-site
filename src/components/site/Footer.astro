@@ -9,7 +9,8 @@ const year = new Date().getFullYear();
     class="mx-auto flex max-w-2xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
   >
     <p>&copy; {year} Robin Reinecke</p>
-    <div class="flex gap-4">
+    <div class="flex flex-wrap gap-4">
+      <a href="/now" class="transition-colors hover:text-brand">Now</a>
       <a href={SOCIAL_LINKS.github} class="transition-colors hover:text-brand">GitHub</a>
       <a href={SOCIAL_LINKS.linkedin} class="transition-colors hover:text-brand">LinkedIn</a>
       <a href="/rss.xml" class="transition-colors hover:text-brand">RSS</a>

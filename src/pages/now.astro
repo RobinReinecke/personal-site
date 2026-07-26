@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Separator from '../components/ui/separator.astro';
+
+// A "now" page — what I'm focused on at this point in life.
+// Convention: https://nownownow.com/about
+// Keep this current. Update the date whenever the content changes.
+const lastUpdated = new Date('2026-07-26');
+const formattedDate = lastUpdated.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const focus = [
+  {
+    title: 'Work',
+    points: [
+      'Leading engineering on an international, internal payment application at E.ON Digital Technology.',
+      'Setting engineering standards across an expertise group so product teams can ship secure, performant software.',
+    ],
+  },
+  {
+    title: 'Learning',
+    points: [
+      'Going deeper on web security research and keeping up with the evolving HTTP and browser security landscape.',
+      'Sharpening my sense for clean, maintainable architecture over accidental complexity.',
+    ],
+  },
+  {
+    title: 'Building',
+    points: [
+      'This website. A small, self-hosted corner of the internet that I keep tinkering with.',
+      'Writing more regularly on the blog about the things I run into and learn.',
+    ],
+  },
+  {
+    title: 'Away from the keyboard',
+    points: [
+      'Running my home server and letting it teach me things production never would.',
+      'Reading, and trying to protect the deep-focus time that good engineering needs.',
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Now"
+  description="What Robin Reinecke is focused on right now - work, learning, and side projects."
+>
+  <header>
+    <h1 class="text-3xl font-semibold tracking-tight">
+      Now<span class="text-brand">.</span>
+    </h1>
+    <p class="mt-2 max-w-2xl text-muted-foreground">
+      A snapshot of what I'm focused on at the moment. Inspired by <a
+        href="https://nownownow.com/about"
+        class="link-underline text-brand">Derek Sivers'</a
+      > idea of a <span class="font-medium text-foreground">/now</span> page.
+    </p>
+    <p class="mt-2 text-sm text-muted-foreground">Last updated {formattedDate}.</p>
+  </header>
+
+  <Separator class="my-10" />
+
+  <div class="flex flex-col gap-8">
+    {
+      focus.map((block) => (
+        <section>
+          <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+            {block.title}
+          </h2>
+          <ul class="mt-3 list-disc space-y-1 pl-5 text-muted-foreground">
+            {block.points.map((point) => (
+              <li>{point}</li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
