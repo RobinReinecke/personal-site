@@ -1,15 +1,18 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import Prose from '../components/site/Prose.astro';
 import TagList from '../components/site/TagList.astro';
+import TableOfContents from '../components/site/TableOfContents.astro';
 import { AUTHOR_NAME, SITE_TITLE, SITE_URL } from '../consts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
+  headings?: MarkdownHeading[];
 }
 
-const { post } = Astro.props;
+const { post, headings = [] } = Astro.props;
 const { title, description, date, updated, tags } = post.data;
 const slug = post.data.slug ?? post.id;
 
@@ -78,6 +81,7 @@ const jsonLd = {
         <TagList tags={tags} />
       </div>
     </header>
+    <TableOfContents headings={headings} />
     <Prose>
       <slot />
     </Prose>
