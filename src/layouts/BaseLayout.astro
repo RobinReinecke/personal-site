@@ -5,6 +5,7 @@ import Footer from '../components/site/Footer.astro';
 import NetworkBackground from '../components/site/NetworkBackground.astro';
 import EasterEggs from '../components/site/EasterEggs.astro';
 import Terminal from '../components/site/Terminal.astro';
+import CommandPalette from '../components/site/CommandPalette.astro';
 import Seo from '../components/site/Seo.astro';
 import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
@@ -103,6 +104,7 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
     <NetworkBackground />
     <EasterEggs />
     <Terminal />
+    <CommandPalette />
     <div class="relative z-10 flex min-h-screen flex-col">
       <Header />
       <main class="mx-auto w-full max-w-2xl flex-1 px-4 py-12">

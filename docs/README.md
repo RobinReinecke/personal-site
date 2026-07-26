@@ -12,6 +12,7 @@ bug.
 
 - [architecture.md](architecture.md) — What the project is, the stack, and the folder layout.
 - [content.md](content.md) — Authoring blog posts and the frontmatter schema.
+- [features.md](features.md) — Interactive features (command palette, terminal, blog enhancements) and how to keep them in sync.
 - [seo.md](seo.md) — SEO meta, structured data, OG image generation, sitemap.
 - [styling.md](styling.md) — Tailwind, the `cn()` helper, and component conventions.
 - [deployment.md](deployment.md) — Docker build, Caddy runtime, Umami analytics.

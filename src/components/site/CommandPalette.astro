@@ -1,0 +1,218 @@
+---
+import { SOCIAL_LINKS } from '../../consts';
+---
+
+<div
+  id="palette-overlay"
+  class="fixed inset-0 z-50 hidden items-start justify-center bg-black/50 px-4 pt-24 backdrop-blur-sm"
+  data-github={SOCIAL_LINKS.github}
+  data-linkedin={SOCIAL_LINKS.linkedin}
+  data-email={SOCIAL_LINKS.email}
+>
+  <div
+    id="palette-panel"
+    class="flex max-h-[60vh] w-full max-w-lg flex-col overflow-hidden rounded-lg border border-border bg-card shadow-lg"
+  >
+    <div class="flex items-center gap-2 border-b border-border px-4 py-3">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-4 w-4 shrink-0 text-muted-foreground"
+      >
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.3-4.3"></path>
+      </svg>
+      <input
+        id="palette-input"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Type a command or search…"
+        class="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+      />
+      <kbd
+        class="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground"
+      >
+        ESC
+      </kbd>
+    </div>
+
+    <ul id="palette-list" class="flex-1 overflow-y-auto py-2" role="listbox"></ul>
+
+    <p id="palette-empty" class="hidden px-4 py-6 text-center text-sm text-muted-foreground">
+      No matching commands.
+    </p>
+  </div>
+</div>
+
+<script>
+  interface Command {
+    label: string;
+    hint: string;
+    keywords?: string;
+    run: () => void;
+  }
+
+  const overlay = document.getElementById('palette-overlay');
+  const panel = document.getElementById('palette-panel');
+  const input = document.getElementById('palette-input');
+  const list = document.getElementById('palette-list');
+  const empty = document.getElementById('palette-empty');
+
+  if (overlay && panel && input instanceof HTMLInputElement && list && empty) {
+    const inputEl = input;
+    const github = overlay.dataset.github ?? '';
+    const linkedin = overlay.dataset.linkedin ?? '';
+    const email = overlay.dataset.email ?? '';
+
+    const go = (href: string) => () => (location.href = href);
+
+    const commands: Command[] = [
+      { label: 'Home', hint: 'Page', keywords: 'start index', run: go('/') },
+      { label: 'Blog', hint: 'Page', keywords: 'posts articles writing', run: go('/blog') },
+      { label: 'About', hint: 'Page', keywords: 'cv resume experience', run: go('/about') },
+      { label: 'Now', hint: 'Page', keywords: 'current focus', run: go('/now') },
+      { label: 'Uses', hint: 'Page', keywords: 'tools setup stack', run: go('/uses') },
+      { label: 'Changelog', hint: 'Page', keywords: 'history updates', run: go('/changelog') },
+      {
+        label: 'Toggle theme',
+        hint: 'Action',
+        keywords: 'dark light mode appearance',
+        run: () => document.getElementById('theme-toggle')?.click(),
+      },
+      {
+        label: 'Open terminal',
+        hint: 'Action',
+        keywords: 'console shell cli',
+        run: () => window.dispatchEvent(new CustomEvent('toggle-terminal')),
+      },
+      { label: 'RSS feed', hint: 'Action', keywords: 'subscribe feed', run: go('/rss.xml') },
+      { label: 'GitHub', hint: 'Link', keywords: 'code repos', run: go(github) },
+      { label: 'LinkedIn', hint: 'Link', keywords: 'social profile', run: go(linkedin) },
+      { label: 'Email me', hint: 'Link', keywords: 'contact mail', run: go(`mailto:${email}`) },
+    ];
+
+    let filtered: Command[] = commands;
+    let activeIndex = 0;
+
+    function itemMatches(command: Command, query: string): boolean {
+      const haystack = `${command.label} ${command.hint} ${command.keywords ?? ''}`.toLowerCase();
+      return query
+        .toLowerCase()
+        .split(/\s+/)
+        .every((token) => haystack.includes(token));
+    }
+
+    function render() {
+      list!.innerHTML = '';
+      filtered.forEach((command, index) => {
+        const li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.dataset.index = String(index);
+        li.className =
+          'mx-2 flex cursor-pointer items-center justify-between gap-3 rounded-md px-3 py-2 text-sm';
+
+        const label = document.createElement('span');
+        label.textContent = command.label;
+
+        const hint = document.createElement('span');
+        hint.textContent = command.hint;
+        hint.className = 'text-xs text-muted-foreground';
+
+        li.append(label, hint);
+        li.addEventListener('mouseenter', () => setActive(index));
+        li.addEventListener('click', () => runActive(index));
+        list!.appendChild(li);
+      });
+
+      empty!.classList.toggle('hidden', filtered.length > 0);
+      updateActive();
+    }
+
+    // Toggle active styling on existing list items without rebuilding the DOM.
+    // Rebuilding on hover/keypress re-fires mouseenter under the cursor, which
+    // hijacks the selection and breaks keyboard navigation.
+    function updateActive() {
+      const items = list!.children;
+      for (let index = 0; index < items.length; index++) {
+        const li = items[index] as HTMLElement;
+        const isActive = index === activeIndex;
+        li.classList.toggle('bg-accent', isActive);
+        li.classList.toggle('text-foreground', isActive);
+        li.classList.toggle('text-muted-foreground', !isActive);
+        if (isActive) li.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    function setActive(index: number) {
+      activeIndex = index;
+      updateActive();
+    }
+
+    function applyFilter() {
+      const query = inputEl.value.trim();
+      filtered = query ? commands.filter((command) => itemMatches(command, query)) : commands;
+      activeIndex = 0;
+      render();
+    }
+
+    function runActive(index = activeIndex) {
+      const command = filtered[index];
+      if (!command) return;
+      close();
+      command.run();
+    }
+
+    function open() {
+      overlay!.classList.remove('hidden');
+      overlay!.classList.add('flex');
+      inputEl.value = '';
+      applyFilter();
+      inputEl.focus();
+    }
+
+    function close() {
+      overlay!.classList.add('hidden');
+      overlay!.classList.remove('flex');
+    }
+
+    function isOpen() {
+      return !overlay!.classList.contains('hidden');
+    }
+
+    inputEl.addEventListener('input', applyFilter);
+
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIndex = Math.min(activeIndex + 1, filtered.length - 1);
+        updateActive();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIndex = Math.max(activeIndex - 1, 0);
+        updateActive();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        runActive();
+      } else if (e.key === 'Escape') {
+        close();
+      }
+    });
+
+    overlay.addEventListener('click', (e) => {
+      if (!panel!.contains(e.target as Node)) close();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (isOpen()) close();
+        else open();
+      }
+    });
+  }
+</script>
