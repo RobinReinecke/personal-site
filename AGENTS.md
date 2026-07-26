@@ -13,6 +13,9 @@ detailed knowledge here** — put it in [docs/](docs/README.md).
    a test or a documented manual verification. See [docs/testing.md](docs/testing.md).
 3. **The build must stay green.** `pnpm check` and `pnpm build` must pass locally before you
    finish. CI runs `format:check`, `lint`, `check`, and `build`.
+4. **Keep the changelog current.** Any user-visible change to the site (new pages, features, notable
+   fixes) MUST add an entry to [src/pages/changelog.astro](src/pages/changelog.astro) in the same
+   change. Add newest entries at the top with an accurate date and the right `added`/`changed`/`fixed`/`removed` type.
 
 ## Commands
 

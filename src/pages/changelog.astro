@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Separator from '../components/ui/separator.astro';
+import Badge from '../components/ui/badge.astro';
+
+// A changelog for the site itself. Add newest entries at the top.
+// `type` drives the badge label: added / changed / fixed / removed.
+const entries = [
+  {
+    date: '2026-07-26',
+    changes: [
+      { type: 'added', text: 'A /now page describing what I am currently focused on.' },
+      { type: 'added', text: "A /uses page listing my tools, hardware, and this site's stack." },
+      { type: 'added', text: 'A changelog for the site itself.' },
+    ],
+  },
+  {
+    date: '2026-07-06',
+    changes: [
+      { type: 'added', text: 'Launched the site: blog, about page, and a few hidden easter eggs.' },
+    ],
+  },
+];
+
+const formatDate = (iso: string) =>
+  new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout title="Changelog" description="A running log of notable changes to this website.">
+  <header>
+    <h1 class="text-3xl font-semibold tracking-tight">
+      Changelog<span class="text-brand">.</span>
+    </h1>
+    <p class="mt-2 max-w-2xl text-muted-foreground">
+      This site is a project of its own. Here's how it has evolved over time.
+    </p>
+  </header>
+
+  <Separator class="my-10" />
+
+  <div class="flex flex-col gap-10">
+    {
+      entries.map((entry) => (
+        <section>
+          <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+            {formatDate(entry.date)}
+          </h2>
+          <ul class="mt-3 flex flex-col gap-2">
+            {entry.changes.map((change) => (
+              <li class="flex items-baseline gap-3">
+                <Badge class="shrink-0 capitalize">{change.type}</Badge>
+                <span class="text-muted-foreground">{change.text}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
