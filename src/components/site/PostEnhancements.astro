@@ -1,0 +1,72 @@
+---
+// Client-side enhancements for rendered blog posts:
+//  1. Hover anchor links on headings that copy a deep link to the clipboard.
+//  2. A "Copy" button on every code block.
+---
+
+<script>
+  function ready(fn: () => void) {
+    if (document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
+
+  ready(() => {
+    const prose = document.querySelector('article .prose');
+    if (!prose) return;
+
+    // --- 1. Copy-link anchors on headings ---
+    const headings = prose.querySelectorAll<HTMLElement>('h2[id], h3[id], h4[id]');
+    headings.forEach((heading) => {
+      heading.classList.add('group', 'scroll-mt-24', 'relative');
+
+      const anchor = document.createElement('button');
+      anchor.type = 'button';
+      anchor.setAttribute('aria-label', `Copy link to section "${heading.textContent ?? ''}"`);
+      anchor.className =
+        'absolute -left-6 top-1/2 -translate-y-1/2 px-1 text-brand opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100';
+      anchor.textContent = '#';
+
+      anchor.addEventListener('click', async () => {
+        const url = `${location.origin}${location.pathname}#${heading.id}`;
+        history.replaceState(null, '', `#${heading.id}`);
+        try {
+          await navigator.clipboard.writeText(url);
+          const previous = anchor.textContent;
+          anchor.textContent = '✓';
+          setTimeout(() => (anchor.textContent = previous), 1200);
+        } catch {
+          /* clipboard blocked — the hash update above still works */
+        }
+      });
+
+      heading.prepend(anchor);
+    });
+
+    // --- 2. Copy button on code blocks ---
+    const blocks = prose.querySelectorAll<HTMLPreElement>('pre');
+    blocks.forEach((pre) => {
+      pre.classList.add('relative', 'group');
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-label', 'Copy code to clipboard');
+      button.className =
+        'absolute right-2 top-2 rounded-md border border-white/15 bg-white/10 px-2 py-1 text-xs font-medium text-white opacity-0 backdrop-blur transition-opacity hover:bg-white/20 focus:opacity-100 group-hover:opacity-100';
+      button.textContent = 'Copy';
+
+      button.addEventListener('click', async () => {
+        const code = pre.querySelector('code')?.textContent ?? pre.textContent ?? '';
+        try {
+          await navigator.clipboard.writeText(code);
+          button.textContent = 'Copied!';
+          setTimeout(() => (button.textContent = 'Copy'), 1200);
+        } catch {
+          button.textContent = 'Failed';
+          setTimeout(() => (button.textContent = 'Copy'), 1200);
+        }
+      });
+
+      pre.appendChild(button);
+    });
+  });
+</script>

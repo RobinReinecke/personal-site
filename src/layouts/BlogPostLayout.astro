@@ -6,6 +6,7 @@ import Prose from '../components/site/Prose.astro';
 import TagList from '../components/site/TagList.astro';
 import TableOfContents from '../components/site/TableOfContents.astro';
 import RelatedPosts from '../components/site/RelatedPosts.astro';
+import PostEnhancements from '../components/site/PostEnhancements.astro';
 import { AUTHOR_NAME, SITE_TITLE, SITE_URL } from '../consts';
 
 interface Props {
@@ -88,4 +89,5 @@ const jsonLd = {
     </Prose>
   </article>
   <RelatedPosts post={post} />
+  <PostEnhancements />
 </BaseLayout>
