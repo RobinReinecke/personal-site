@@ -1,22 +1,46 @@
-## Development
+# AGENTS.md
 
-When starting the dev server, use background mode:
+Starting point for coding agents and developers. This file is intentionally short: it holds the
+rules and the fastest commands, then points you to the knowledge base. **Do not accumulate
+detailed knowledge here** — put it in [docs/](docs/README.md).
 
+## Golden rules
+
+1. **Keep documentation current.** Every change that affects how the code works, is built, or is
+   operated MUST update the relevant file (this file and/or [docs/](docs/README.md)) in the same
+   change. Add new knowledge; delete or correct anything obsolete. Out-of-date docs are a bug.
+2. **Test important code before marking a feature done.** Any non-trivial logic must be covered by
+   a test or a documented manual verification. See [docs/testing.md](docs/testing.md).
+3. **The build must stay green.** `pnpm check` and `pnpm build` must pass locally before you
+   finish. CI runs `format:check`, `lint`, `check`, and `build`.
+
+## Commands
+
+```sh
+pnpm install        # install dependencies (use --frozen-lockfile in CI/Docker)
+pnpm dev            # dev server at http://localhost:4321
+pnpm check          # typecheck via `astro check` — run before finishing
+pnpm build          # static build to ./dist — run before finishing
+pnpm preview        # preview the built ./dist locally
+
+pnpm lint           # ESLint (flat config, TS + Astro)
+pnpm lint:fix       # ESLint with autofix
+pnpm format         # Prettier write (Astro + Tailwind class-sorting plugins)
+pnpm format:check   # Prettier check (used in CI)
 ```
-astro dev --background
-```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+Dev server in background mode (preferred for agents): `astro dev --background` — manage with
+`astro dev stop`, `astro dev status`, and `astro dev logs`.
 
-## Documentation
+## Where the knowledge lives
 
-Full documentation: https://docs.astro.build
+Read the relevant file in [docs/](docs/README.md) before working on a task:
 
-Consult these guides before working on related tasks:
-
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+- [docs/architecture.md](docs/architecture.md) — what this is, the stack, folder layout, config.
+- [docs/content.md](docs/content.md) — authoring blog posts and the frontmatter schema.
+- [docs/seo.md](docs/seo.md) — SEO meta, structured data, OG images, sitemap.
+- [docs/styling.md](docs/styling.md) — Tailwind, `cn()`, component conventions.
+- [docs/deployment.md](docs/deployment.md) — Docker, Caddy, Umami, CI.
+- [docs/social-cross-posting.md](docs/social-cross-posting.md) — the dev.to / LinkedIn / X pipeline.
+- [docs/testing.md](docs/testing.md) — testing policy and how to add a runner.
+- [docs/decisions.md](docs/decisions.md) — important decisions and their rationale.
