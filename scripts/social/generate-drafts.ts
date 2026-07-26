@@ -29,7 +29,11 @@ function buildLinkedInDraft(fm: Frontmatter, url: string): string {
 }
 
 function buildDevtoBody(fm: Frontmatter, body: string, url: string) {
-  const tags = (fm.tags ?? []).slice(0, 4);
+  // dev.to only allows alphanumeric tags — strip hyphens and other characters.
+  const tags = (fm.tags ?? [])
+    .map((tag) => tag.toLowerCase().replace(/[^a-z0-9]/g, ''))
+    .filter((tag) => tag.length > 0)
+    .slice(0, 4);
   const frontmatterBlock = [
     '---',
     `title: ${fm.title}`,
