@@ -5,6 +5,11 @@ on:
     branches: [main]
     paths:
       - 'src/content/blog/**'
+  workflow_dispatch:
+    inputs:
+      post:
+        description: 'Path to a specific post to draft (e.g. src/content/blog/2026-07-26-how-not-to-charge-someone-twice.md). Leave blank to use the latest commit.'
+        required: false
 
 permissions:
   contents: read
@@ -79,7 +84,11 @@ jobs:
 
       - id: list
         run: |
-          CHANGED=$(git diff --name-only --diff-filter=AM HEAD~1 HEAD -- 'src/content/blog/*.md' 'src/content/blog/*.mdx')
+          if [ -n "${{ inputs.post }}" ]; then
+            CHANGED="${{ inputs.post }}"
+          else
+            CHANGED=$(git diff --name-only --diff-filter=AM HEAD~1 HEAD -- 'src/content/blog/*.md' 'src/content/blog/*.mdx')
+          fi
           PUBLISHED=$(echo "$CHANGED" | xargs -I{} sh -c 'grep -qE "^draft: *true" "{}" || echo "{}"')
           FILES=$(echo "$PUBLISHED" | jq -R -s -c 'split("\n") | map(select(length > 0))')
           echo "posts=$FILES" >> "$GITHUB_OUTPUT"
