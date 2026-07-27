@@ -3,8 +3,195 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Not Found" noindex={true}>
-  <h1 class="text-3xl font-semibold tracking-tight">404</h1>
+  <h1 class="text-3xl font-semibold tracking-tight">
+    404<span class="text-brand">.</span>
+  </h1>
   <p class="mt-4 text-muted-foreground">
-    This page doesn't exist. <a href="/" class="underline">Go home</a>.
+    This page took a wrong turn. While you're here, catch the dot — or just <a
+      href="/"
+      class="link-underline text-brand">go home</a
+    >.
   </p>
+
+  <div class="mt-8">
+    <div class="flex items-center justify-between text-sm text-muted-foreground">
+      <p>Score: <span id="snake-score" class="font-mono text-foreground">0</span></p>
+      <p class="hidden sm:block">Arrow keys / WASD to move</p>
+    </div>
+
+    <div class="relative mt-3">
+      <canvas
+        id="snake-canvas"
+        width="420"
+        height="420"
+        class="aspect-square w-full rounded-lg border border-border bg-card"></canvas>
+
+      <div
+        id="snake-overlay"
+        class="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-lg bg-background/70 backdrop-blur-sm"
+      >
+        <p id="snake-message" class="text-lg font-semibold">Lost? Play a round.</p>
+        <button
+          id="snake-start"
+          type="button"
+          class="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:brightness-110"
+        >
+          Start
+        </button>
+        <p class="text-xs text-muted-foreground">Press any arrow key to begin.</p>
+      </div>
+    </div>
+  </div>
 </BaseLayout>
+
+<script>
+  const canvas = document.getElementById('snake-canvas');
+  const scoreEl = document.getElementById('snake-score');
+  const overlay = document.getElementById('snake-overlay');
+  const message = document.getElementById('snake-message');
+  const startBtn = document.getElementById('snake-start');
+
+  if (canvas instanceof HTMLCanvasElement && scoreEl && overlay && message && startBtn) {
+    const ctx = canvas.getContext('2d')!;
+    const CELLS = 21;
+    const cell = canvas.width / CELLS;
+
+    const brand =
+      getComputedStyle(document.documentElement).getPropertyValue('--color-brand').trim() ||
+      '#14b8a6';
+
+    type Point = { x: number; y: number };
+
+    let snake: Point[] = [];
+    let dir: Point = { x: 1, y: 0 };
+    let nextDir: Point = { x: 1, y: 0 };
+    let food: Point = { x: 0, y: 0 };
+    let score = 0;
+    let running = false;
+    let timer: number | undefined;
+
+    function randomFood(): Point {
+      let p: Point;
+      do {
+        p = { x: Math.floor(Math.random() * CELLS), y: Math.floor(Math.random() * CELLS) };
+      } while (snake.some((s) => s.x === p.x && s.y === p.y));
+      return p;
+    }
+
+    function reset() {
+      snake = [
+        { x: 8, y: 10 },
+        { x: 7, y: 10 },
+        { x: 6, y: 10 },
+      ];
+      dir = { x: 1, y: 0 };
+      nextDir = { x: 1, y: 0 };
+      food = randomFood();
+      score = 0;
+      scoreEl!.textContent = '0';
+    }
+
+    function draw() {
+      // Board background.
+      ctx.fillStyle = getComputedStyle(ctx.canvas).backgroundColor;
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+      // Food.
+      ctx.fillStyle = brand;
+      ctx.beginPath();
+      ctx.arc(food.x * cell + cell / 2, food.y * cell + cell / 2, cell / 2.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Snake.
+      snake.forEach((segment, index) => {
+        ctx.fillStyle = brand;
+        ctx.globalAlpha = index === 0 ? 1 : 0.65;
+        ctx.fillRect(segment.x * cell + 1, segment.y * cell + 1, cell - 2, cell - 2);
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function step() {
+      dir = nextDir;
+      const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+
+      const hitWall = head.x < 0 || head.y < 0 || head.x >= CELLS || head.y >= CELLS;
+      const hitSelf = snake.some((s) => s.x === head.x && s.y === head.y);
+      if (hitWall || hitSelf) {
+        gameOver();
+        return;
+      }
+
+      snake.unshift(head);
+
+      if (head.x === food.x && head.y === food.y) {
+        score += 1;
+        scoreEl!.textContent = String(score);
+        food = randomFood();
+      } else {
+        snake.pop();
+      }
+
+      draw();
+    }
+
+    function loop() {
+      // Speed up gently as the score grows.
+      const interval = Math.max(70, 140 - score * 4);
+      timer = window.setTimeout(() => {
+        if (running) {
+          step();
+          loop();
+        }
+      }, interval);
+    }
+
+    function start() {
+      reset();
+      running = true;
+      overlay!.classList.add('hidden');
+      draw();
+      loop();
+    }
+
+    function gameOver() {
+      running = false;
+      if (timer) clearTimeout(timer);
+      message!.textContent = `Game over — score ${score}.`;
+      startBtn!.textContent = 'Play again';
+      overlay!.classList.remove('hidden');
+    }
+
+    startBtn.addEventListener('click', start);
+
+    const keys: Record<string, Point> = {
+      ArrowUp: { x: 0, y: -1 },
+      ArrowDown: { x: 0, y: 1 },
+      ArrowLeft: { x: -1, y: 0 },
+      ArrowRight: { x: 1, y: 0 },
+      w: { x: 0, y: -1 },
+      s: { x: 0, y: 1 },
+      a: { x: -1, y: 0 },
+      d: { x: 1, y: 0 },
+    };
+
+    window.addEventListener('keydown', (e) => {
+      const move = keys[e.key];
+      if (!move) return;
+
+      // Start on the first directional key press.
+      if (!running) {
+        e.preventDefault();
+        start();
+      }
+
+      // Ignore reversals into the snake's own neck.
+      if (move.x === -dir.x && move.y === -dir.y) return;
+      nextDir = move;
+      e.preventDefault();
+    });
+
+    reset();
+    draw();
+  }
+</script>
