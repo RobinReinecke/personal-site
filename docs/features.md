@@ -41,6 +41,10 @@ you add to the site. Most live in [src/components/site/](../src/components/site/
 
 - [EasterEggs.astro](../src/components/site/EasterEggs.astro) — the `otter()` console command and
   the `otter` keystroke trigger. Add new console/keystroke gags here.
+- [SelfDestruct.astro](../src/components/site/SelfDestruct.astro) — a fake, full-page "self
+  destruct" animation. Triggered by the hidden `rm -rf /` terminal command via the `fake-destruct`
+  window event; it dissolves the page, plays a black terminal takeover, then restores everything
+  (nothing is actually deleted).
 - The terminal overlay also hides undocumented commands on purpose.
 
 ## Standalone pages

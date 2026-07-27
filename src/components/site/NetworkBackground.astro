@@ -48,6 +48,7 @@
     let rafId = 0;
     let mouseX = -9999;
     let mouseY = -9999;
+    let destructing = false;
 
     function isDark() {
       return document.documentElement.classList.contains('dark');
@@ -85,6 +86,15 @@
       pulses = pulses.filter((p) => now - p.start < PULSE_DURATION);
 
       for (const n of nodes) {
+        // Destruction: cut the tethers, apply gravity, let the dots rain down.
+        if (destructing) {
+          n.vy += 0.35;
+          n.vx *= 0.99;
+          n.x += n.vx;
+          n.y += n.vy;
+          continue;
+        }
+
         n.x += n.vx;
         n.y += n.vy;
         if (n.x < 0 || n.x > width) n.vx *= -1;
@@ -158,6 +168,26 @@
     window.addEventListener('mouseleave', () => {
       mouseX = -9999;
       mouseY = -9999;
+    });
+
+    // Join the fake self-destruct: give the dots a shove and let gravity take them.
+    window.addEventListener('fake-destruct', () => {
+      setTimeout(() => {
+        destructing = true;
+        for (const n of nodes) {
+          n.vx = (Math.random() - 0.5) * 4;
+          n.vy = Math.random() * 2;
+        }
+        canvas.style.transition = 'opacity 1.8s ease';
+        canvas.style.opacity = '0';
+      }, 1000);
+    });
+
+    // ...and reassemble once the joke is over.
+    window.addEventListener('fake-restore', () => {
+      destructing = false;
+      resize();
+      canvas.style.opacity = isDark() ? '0.5' : '0.4';
     });
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {

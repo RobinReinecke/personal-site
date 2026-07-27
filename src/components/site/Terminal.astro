@@ -186,6 +186,7 @@ import { JOB_TITLE, SITE_DESCRIPTION, SOCIAL_LINKS } from '../../consts';
               '- **ls** list what is here',
               '- **cat** `<file>` read a file',
               '- **cd** `<page>` go to a page (home, blog, about)',
+              '- **rm** `-rf /` do not. seriously. (okay, maybe once)',
               '- **otter** you know what this does',
               "- **coffee** get's you a coffee",
               '- **clear** clear the screen',
@@ -253,6 +254,20 @@ import { JOB_TITLE, SITE_DESCRIPTION, SOCIAL_LINKS } from '../../consts';
         case 'coffee':
           print("Nice try. Coffee's on me if we ever meet.");
           break;
+        case 'rm': {
+          const flags = args.filter((a) => a.startsWith('-')).join('');
+          const reckless = flags.includes('r') && flags.includes('f');
+          if (!reckless) {
+            print("rm: try harder. (hint: it usually takes '-rf')", 'text-muted-foreground');
+            break;
+          }
+          printRaw('rm: recursively removing everything ...', 'text-red-500');
+          setTimeout(() => {
+            close();
+            window.dispatchEvent(new CustomEvent('fake-destruct'));
+          }, 900);
+          break;
+        }
         case 'unlock':
           if (args[0] === '2026') {
             print(

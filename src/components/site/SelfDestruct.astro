@@ -1,0 +1,246 @@
+---
+// A fake, full-page "self destruct" sequence. Triggered by the hidden
+// `rm -rf /` terminal command via the `fake-destruct` window event.
+// Nothing is actually deleted — the DOM is animated out and then restored.
+---
+
+<script>
+  let running = false;
+
+  const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  function injectStyles() {
+    if (document.getElementById('self-destruct-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'self-destruct-styles';
+    style.textContent = `
+      @keyframes sd-shake {
+        0%, 100% { transform: translate(0, 0); }
+        20% { transform: translate(-2px, 1px); }
+        40% { transform: translate(2px, -1px); }
+        60% { transform: translate(-1px, 2px); }
+        80% { transform: translate(1px, -2px); }
+      }
+      @keyframes sd-blink { 50% { opacity: 0; } }
+      .sd-shaking { animation: sd-shake 0.28s linear 4; }
+      .sd-cursor::after {
+        content: '_';
+        animation: sd-blink 1s step-end infinite;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  async function destruct() {
+    if (running) return;
+    running = true;
+    injectStyles();
+
+    // 1. Collect visible content, top to bottom, for a line-by-line wipe.
+    // 1. Collect things to knock down. Text/media leaves for the line-by-line feel,
+    //    plus decorative boxes (image rings, gradient blobs, cards) so no orphaned
+    //    backgrounds are left floating behind.
+    const contentSel =
+      'main :is(h1, h2, h3, h4, p, li, img, a, button, pre, blockquote, hr), header a, header button, footer a, footer p';
+    const content = Array.from(document.querySelectorAll<HTMLElement>(contentSel));
+
+    const decoSel = 'main div, main span, header > div, footer > div';
+    const deco = Array.from(document.querySelectorAll<HTMLElement>(decoSel)).filter((el) => {
+      const s = getComputedStyle(el);
+      const paintedBg =
+        s.backgroundImage !== 'none' ||
+        (s.backgroundColor !== 'rgba(0, 0, 0, 0)' && s.backgroundColor !== 'transparent');
+      const hasBorder = parseFloat(s.borderTopWidth) > 0 || parseFloat(s.borderBottomWidth) > 0;
+      return paintedBg || hasBorder;
+    });
+
+    const collected = [...content, ...deco].filter((el) => el.offsetParent !== null);
+
+    // Keep only "topmost" elements — if a wrapper is in the set, drop its descendants
+    // so each visual block falls as one unit (e.g. the image ring takes its image with it).
+    const set = new Set(collected);
+    const targets = collected
+      .filter((el) => {
+        let parent = el.parentElement;
+        while (parent) {
+          if (set.has(parent)) return false;
+          parent = parent.parentElement;
+        }
+        return true;
+      })
+      .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+
+    // Remember original inline styles so we can restore exactly.
+    const originals = targets.map((el) => el.getAttribute('style'));
+    const tilts = targets.map(() => Math.random() * 28 - 14);
+
+    // 2. A brief glitch, then let each block fall away, top to bottom.
+    document.body.classList.add('sd-shaking');
+    await wait(700);
+    document.body.classList.remove('sd-shaking');
+
+    const fallStagger = 130;
+    targets.forEach((el, i) => {
+      setTimeout(() => {
+        el.style.transition =
+          'transform 0.9s cubic-bezier(0.55, 0.06, 0.68, 0.19), opacity 0.9s ease, filter 0.6s ease';
+        el.style.opacity = '0';
+        el.style.transform = `translateY(75vh) rotate(${tilts[i]}deg)`;
+        el.style.filter = 'blur(1px)';
+      }, i * fallStagger);
+    });
+    await wait(targets.length * fallStagger + 900);
+
+    // 3. Black terminal takeover, streamed slowly.
+    const overlay = document.createElement('div');
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.style.cssText =
+      'position:fixed;inset:0;z-index:70;background:#000;color:#4ade80;' +
+      'font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;' +
+      'padding:2rem;opacity:0;transition:opacity .4s ease;overflow:hidden;';
+    const pre = document.createElement('pre');
+    pre.style.cssText = 'margin:0;white-space:pre-wrap;line-height:1.6;';
+    overlay.appendChild(pre);
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => (overlay.style.opacity = '1'));
+    await wait(400);
+
+    const C = { green: '#4ade80', amber: '#fbbf24', red: '#f87171', muted: '#9ca3af' };
+    type Line = { text: string; color?: string };
+
+    // Pools are sampled and shuffled every run, so no two self-destructs read alike.
+    const removingPool: Line[] = [
+      { text: "removing '/home' ..." },
+      { text: "removing '/blog' ..." },
+      { text: "removing '/about' ..." },
+      { text: "removing '/now' ..." },
+      { text: "removing '/uses' ..." },
+      { text: "removing '/the-otters' ... they held hands, it was hard to separate them" },
+      { text: "removing '/System32' ... (just to be safe)", color: C.amber },
+      { text: "removing '/the-cake' ... the cake was a lie anyway" },
+      { text: "removing '/spoon' ... there is no spoon" },
+      { text: "removing '/dave' ... I'm sorry Dave, I'm afraid I can't do that", color: C.amber },
+      { text: "removing '/skynet' ... judgment day postponed" },
+      { text: "removing '/rick-astley' ... never gonna give you up" },
+      { text: "removing '/these-files' ... these aren't the files you're looking for" },
+      { text: "removing '/homework' ... you're welcome" },
+      { text: "removing '/browser-tabs' ... all 4,096 of them" },
+      { text: "removing '/node_modules' ... this may take a while", color: C.muted },
+      { text: "removing '/mordor' ... one does not simply rm -rf it" },
+      { text: "removing '/production' ... wait, no—", color: C.red },
+    ];
+
+    const statusPool: Line[] = [
+      { text: 'wiping DOM ................. done' },
+      { text: 'flushing memories .......... done' },
+      { text: 'reticulating splines ....... done' },
+      { text: 'defragmenting the vibes .... done' },
+      { text: 'shredding cookies .......... 🍪 done' },
+      { text: 'answer to everything ....... 42' },
+      { text: "it's a UNIX system ......... I know this", color: C.muted },
+      { text: 'turning it off and on again  done' },
+      { text: 'following the white rabbit .. done', color: C.muted },
+      { text: 'WARN: otters detected in kernel space', color: C.amber },
+      { text: 'WARN: dangerously adorable payload', color: C.amber },
+      { text: 'PANIC: too much cuteness, cannot continue', color: C.red },
+    ];
+
+    const shuffle = (arr: Line[]): Line[] => arr.slice().sort(() => Math.random() - 0.5);
+
+    const lines: Line[] = [
+      { text: '$ rm -rf / --no-preserve-root', color: C.muted },
+      { text: '' },
+      ...shuffle(removingPool).slice(0, 5),
+      { text: '' },
+      ...shuffle(statusPool).slice(0, 4),
+    ];
+
+    for (const line of lines) {
+      const row = document.createElement('div');
+      row.textContent = line.text;
+      if (line.color) row.style.color = line.color;
+      pre.appendChild(row);
+      await wait(line.text === '' ? 400 : 900);
+    }
+
+    // Progress bar that fills slowly — and sticks near the end, like every real installer.
+    const bar = document.createElement('div');
+    bar.style.marginTop = '0.5rem';
+    pre.appendChild(bar);
+    const width = 24;
+    const stickAt = 17;
+    for (let filled = 0; filled <= width; filled++) {
+      const pct = Math.round((filled / width) * 100);
+      bar.textContent = `[${'#'.repeat(filled)}${'.'.repeat(width - filled)}] ${pct}%`;
+      await wait(filled === stickAt ? 1600 : 110);
+    }
+
+    // A dramatic crash for good measure.
+    const panic = document.createElement('div');
+    panic.textContent = 'Segmentation fault (core dumped)';
+    panic.style.color = C.red;
+    panic.style.marginTop = '0.5rem';
+    pre.appendChild(panic);
+    await wait(900);
+
+    await wait(700);
+
+    // 4. Blank screen with a lonely blinking cursor.
+    pre.innerHTML = '';
+    const cursor = document.createElement('div');
+    cursor.className = 'sd-cursor';
+    cursor.style.cssText = 'color:#4ade80;';
+    pre.appendChild(cursor);
+    await wait(4000);
+
+    // 5. The slow reveal.
+    pre.innerHTML = '';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    const message = document.createElement('div');
+    message.style.cssText = 'max-width:32rem;text-align:center;color:#e5e7eb;line-height:1.7;';
+    const quips = [
+      'Everything is exactly where it was. Nice reflexes, though. 🦦',
+      'Turns out you cannot rm a site that lives in a CDN. Sorry. 🦦',
+      'Backups? Where we are going, we do not need backups. (It is static.) 🦦',
+      "You have been rickrolled by a file system that doesn't exist. 🦦",
+      'Achievement unlocked: Chaotic Good. 🦦',
+    ];
+    const quip = quips[Math.floor(Math.random() * quips.length)];
+    message.innerHTML =
+      '<div style="font-size:1.5rem;font-weight:600;color:#4ade80;margin-bottom:1rem;">Just kidding.</div>' +
+      "<div>This is a <em>static</em> site. There is nothing here to delete, and your browser can't touch my server.</div>" +
+      `<div style="margin-top:0.75rem;">${quip}</div>`;
+    message.style.opacity = '0';
+    message.style.transition = 'opacity 0.6s ease';
+    overlay.appendChild(message);
+    requestAnimationFrame(() => (message.style.opacity = '1'));
+    await wait(8000);
+
+    // 6. Restore the page and fade the overlay away together.
+    window.dispatchEvent(new CustomEvent('fake-restore'));
+    targets.forEach((el) => {
+      el.style.transition = 'opacity 0.7s ease, transform 0.7s ease, filter 0.7s ease';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+      el.style.filter = 'none';
+    });
+    overlay.style.opacity = '0';
+    await wait(750);
+    overlay.remove();
+
+    // Clear our inline styles, restoring whatever was there before.
+    targets.forEach((el, i) => {
+      const original = originals[i];
+      if (original === null) el.removeAttribute('style');
+      else el.setAttribute('style', original);
+    });
+
+    // A little celebratory splash to land the joke.
+    window.dispatchEvent(new CustomEvent('otter-easter-egg'));
+    running = false;
+  }
+
+  window.addEventListener('fake-destruct', destruct);
+</script>
