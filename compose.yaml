@@ -1,0 +1,87 @@
+networks:
+  proxy:
+    name: proxy
+    external: true
+
+  umami-internal:
+    internal: true
+
+services:
+  site:
+    build:
+      context: .
+      args:
+        PUBLIC_UMAMI_WEBSITE_ID: ${PUBLIC_UMAMI_WEBSITE_ID:-}
+    image: robinreinecke-site:latest
+    container_name: robinreinecke-site
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      - 'traefik.enable=true'
+      ## HTTP Routers
+      - 'traefik.http.routers.robinreinecke-rtr.entrypoints=websecure'
+      - 'traefik.http.routers.robinreinecke-rtr.rule=Host(`$DOMAIN_PERSONAL`) || Host(`www.$DOMAIN_PERSONAL`)'
+      ## Middlewares
+      - 'traefik.http.routers.robinreinecke-rtr.middlewares=middlewares-rate-limit@file, middlewares-secure-headers@file'
+      ## HTTP Services
+      - 'traefik.http.routers.robinreinecke-rtr.service=robinreinecke-svc'
+      - 'traefik.http.services.robinreinecke-svc.loadbalancer.server.port=80'
+      # Homepage
+      - homepage.group=Other
+      - homepage.name=Robin Reinecke Blog
+      - homepage.icon=caddy
+      - homepage.href=https://$DOMAIN_PERSONAL
+      - homepage.description=Persönliche Website
+
+  umami:
+    image: ghcr.io/umami-software/umami:latest
+    container_name: umami
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET}
+    healthcheck:
+      test: ['CMD-SHELL', 'curl http://localhost:3000/api/heartbeat']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - proxy
+      - umami-internal
+    labels:
+      - 'traefik.enable=true'
+      ## HTTP Routers
+      - 'traefik.http.routers.umami-rtr.entrypoints=websecure'
+      - 'traefik.http.routers.umami-rtr.rule=Host(`analytics.$DOMAIN_PERSONAL`)'
+      - 'traefik.http.routers.umami-rtr.middlewares=middlewares-rate-limit@file, middlewares-secure-headers@file'
+      ## HTTP Services
+      - 'traefik.http.routers.umami-rtr.service=umami-svc'
+      - 'traefik.http.services.umami-svc.loadbalancer.server.port=3000'
+      # Homepage
+      - homepage.group=Other
+      - homepage.name=Robin Reinecke Analytics
+      - homepage.icon=umami
+      - homepage.href=https://analytics.$DOMAIN_PERSONAL
+      - homepage.description=Umami Analytics
+
+  db:
+    image: postgres:15-alpine
+    container_name: umami-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - /opt/appdata/robinreinecke/umami:/var/lib/postgresql/data
+    networks:
+      - umami-internal
