@@ -1,5 +1,7 @@
 # Content (blog)
 
+- For the voice and writing style of posts, see [docs/writing-style.md](writing-style.md). Read it
+  before drafting.
 - Posts live in [src/content/blog/](../src/content/blog/) as `*.md` or `*.mdx`. The filename
   encodes the date and slug (e.g. `2026-07-06-building-my-own-corner-of-the-internet.md`).
 - The frontmatter schema is defined in [src/content.config.ts](../src/content.config.ts) — treat

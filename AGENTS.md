@@ -41,6 +41,7 @@ Read the relevant file in [docs/](docs/README.md) before working on a task:
 
 - [docs/architecture.md](docs/architecture.md) — what this is, the stack, folder layout, config.
 - [docs/content.md](docs/content.md) — authoring blog posts and the frontmatter schema.
+- [docs/writing-style.md](docs/writing-style.md) — the voice and writing style for blog posts.
 - [docs/features.md](docs/features.md) — interactive features (command palette, terminal, blog enhancements) and how to keep them in sync when adding pages.
 - [docs/seo.md](docs/seo.md) — SEO meta, structured data, OG images, sitemap.
 - [docs/styling.md](docs/styling.md) — Tailwind, `cn()`, component conventions.

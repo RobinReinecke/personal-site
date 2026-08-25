@@ -11,27 +11,29 @@ You want to retrieve data and have a complicated set of filters to describe what
 And you have exactly two bad options for expressing it: `GET` or `POST`.
 As of [RFC 10008](https://www.rfc-editor.org/info/rfc10008/), there is finally a third, better one: the **QUERY** method.
 
-## The problem that exists since forever
+## The problem that has been around forever
 
 Say you are building a search endpoint.
 The client needs to send a rich filter: nested conditions, a list of fields to return, sorting, pagination.
 Historically you pick `GET` or `POST`, and both are wrong in their own way.
 
-**Option one: GET with a query string.** This is the _correct_ choice semantically, because a search is a read.
+The first option is a `GET` with a query string.
+Semantically that is the _correct_ choice, because a search is a read.
 `GET` is safe (it does not change state) and idempotent (repeating it is harmless), so caches, proxies, and browsers all know they can cache it, retry it, and generally treat it as harmless.
 The trouble is that your filter has to fit in the URL.
 Complex filters stop fitting in a URL surprisingly fast, URL length limits vary across servers and proxies, and everything you put there leaks into access logs, browser history, and referrer headers.
 You also cannot put a real body on a `GET`.
 RFC 9110 is explicit that content on a `GET` request has no defined semantics, and plenty of servers and intermediaries will strip or reject it.
 
-**Option two: POST the filter as a body.** Now your filter fits comfortably and stays out of the URL.
+The second option is to `POST` the filter as a body.
+Now it fits comfortably and stays out of the URL.
 But you have just lied about what your request does.
 `POST` is defined as neither safe nor idempotent, so every layer between your client and your server now assumes this request might change something.
 Caches will not cache the response (hopefully...).
 A proxy will not transparently retry it.
 The browser throws up a _confirm resubmission_ dialog if someone hits refresh.
 Your observability and security tooling files it under _writes_.
-You are doing a read, but the semantically it as a write, and you lose every optimization that safety and idempotence would have unlocked.
+You are doing a read, but every layer now treats it as a write, and you lose every optimization that safety and idempotence would have given you.
 
 This is the issue millions of APIs have been driving around for decades.
 Elasticsearch, GraphQL over `POST`, and countless internal search endpoints all reach for `POST` because the body is non-negotiable, and then quietly give up caching and safe retries as the price.
@@ -81,8 +83,7 @@ Accept: application/json
 ```
 
 The request declares its own intent honestly.
-A cache is allowed to store the response, as long as it folds the request body into the cache key (the spec requires this, and permits normalizing
-insignificant differences like whitespace in the JSON).
+A cache is allowed to store the response, as long as it folds the request body into the cache key (the spec requires this, and permits normalizing insignificant differences like whitespace in the JSON).
 A proxy is allowed to retry it.
 A `Content-Type` is mandatory, which is a nice touch, because the body is the query and the server needs to know how to read it.
 
@@ -107,7 +108,7 @@ Security tooling encodes assumptions about which methods do what.
 Until firewall rules, request-smuggling defenses, and cache-poisoning protections account for `QUERY` and its body-in-the-cache-key behavior, there is a window where the tooling is behind the spec.
 That is not a reason to avoid `QUERY`, but it is a reason to roll it out deliberately.
 
-## Conclusion
+## Where this leaves us
 
 `QUERY` is the correct fix to a problem we all learned to live with, and standardization is exactly the milestone that starts the clock on real adoption.
 

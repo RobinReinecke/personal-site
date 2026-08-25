@@ -7,10 +7,12 @@ draft: false
 ---
 
 Somewhere between your client and your server, a request died.
-Maybe it never arrived. Maybe it arrived, did its work, and the response got lost on the way back.
+Maybe it never arrived.
+Maybe it arrived, did its work, and the response got lost on the way back.
 From the outside these two cases look identical, and that is the whole problem.
 
-If the request was "load my dashboard", nobody cares. You retry.
+If the request was "load my dashboard", nobody cares.
+You retry.
 If the request was "transfer 500 euros", the difference between "never happened" and "happened, but you never heard back" is exactly the kind of thing that ends up in an incident review.
 
 ## Retrying is not optional
@@ -45,7 +47,8 @@ The client can now retry as often as it likes and the money moves once.
 
 ## The parts people get wrong
 
-The concept is simple. The edge cases are where the fun is.
+The concept is simple.
+The edge cases are where the fun is.
 
 If you only remember "handled" and not the response, the retry gets back an empty 200 or a duplicate error, and the client still does not know what actually happened.
 Returning the original response makes the retry indistinguishable from the first attempt, which is the entire point.
@@ -58,9 +61,10 @@ Let the database do the work with a unique constraint on the key, and give the l
 What should happen if the same key is used with a different body?
 That is a client bug, and silently answering with the stored response of a different request hides it.
 
-Keys shouldn't live forever. Pick a retention window, document it, done.
+Keys shouldn't live forever.
+Pick a retention window, document it, done.
 
-## Conclusion
+## Build it in from day one
 
 None of this is exotic.
 Stripe has shipped it for over a decade, and there is even an IETF draft for a standard `Idempotency-Key` header.
