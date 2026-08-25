@@ -19,6 +19,7 @@
 | `draft`       | boolean  | Defaults to `false`. See draft behaviour below. |
 | `slug`        | string?  | Overrides the slug (defaults to the file id).   |
 | `cover`       | string?  | Optional cover image path.                      |
+| `series`      | string?  | Series name. See series behaviour below.        |
 
 ## Draft behaviour
 
@@ -28,3 +29,13 @@ trigger the [social pipeline](social-cross-posting.md) or [OG image generation](
 ## Slugs
 
 The slug defaults to the file id; override it with the `slug` frontmatter field.
+
+## Series
+
+Give two or more posts the same `series` string to link them as a series. Each post in a series
+renders a `SeriesNav` box ([src/components/site/SeriesNav.astro](../src/components/site/SeriesNav.astro))
+below the title that lists every part in date order, numbers them, and marks the current one. Parts
+are ordered by `date` (oldest first), so publishing a new post in the series slots it in and
+renumbers automatically. Only non-draft posts appear, so a `draft: true` future part stays hidden
+until it ships. The `series` value is shown to readers verbatim, so write it as a display name
+(e.g. `Home Server`).

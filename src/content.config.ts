@@ -13,6 +13,7 @@ const blog = defineCollection({
     draft: z.boolean().default(false),
     slug: z.string().optional(),
     cover: z.string().optional(),
+    series: z.string().optional(),
   }),
 });
 

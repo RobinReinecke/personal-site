@@ -6,6 +6,7 @@ import Prose from '../components/site/Prose.astro';
 import TagList from '../components/site/TagList.astro';
 import TableOfContents from '../components/site/TableOfContents.astro';
 import RelatedPosts from '../components/site/RelatedPosts.astro';
+import SeriesNav from '../components/site/SeriesNav.astro';
 import PostEnhancements from '../components/site/PostEnhancements.astro';
 import { AUTHOR_NAME, SITE_TITLE, SITE_URL } from '../consts';
 
@@ -83,6 +84,7 @@ const jsonLd = {
         <TagList tags={tags} />
       </div>
     </header>
+    <SeriesNav post={post} />
     <TableOfContents headings={headings} />
     <Prose>
       <slot />
