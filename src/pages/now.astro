@@ -5,7 +5,7 @@ import Separator from '../components/ui/separator.astro';
 // A "now" page — what I'm focused on at this point in life.
 // Convention: https://nownownow.com/about
 // Keep this current. Update the date whenever the content changes.
-const lastUpdated = new Date('2026-07-26');
+const lastUpdated = new Date('2026-08-25');
 const formattedDate = lastUpdated.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
@@ -16,29 +16,30 @@ const focus = [
   {
     title: 'Work',
     points: [
-      'Leading engineering on an international, internal payment application at E.ON Digital Technology.',
-      'Setting engineering standards across an expertise group so product teams can ship secure, performant software.',
-    ],
-  },
-  {
-    title: 'Learning',
-    points: [
-      'Going deeper on web security research and keeping up with the evolving HTTP and browser security landscape.',
-      'Sharpening my sense for clean, maintainable architecture over accidental complexity.',
+      'Leading engineering on an internal payment platform at E.ON Digital Technology.',
+      'Setting the engineering standards for an expertise group, so the teams around us can ship secure software without relearning the same lessons.',
     ],
   },
   {
     title: 'Building',
     points: [
-      'This website. A small, self-hosted corner of the internet that I keep tinkering with.',
-      'Writing more regularly on the blog about the things I run into and learn.',
+      'This website, a small self-hosted corner of the internet I keep tinkering with.',
+      'Rebuilding my home server from scratch, and writing the series about it that this blog just started.',
+      'Writing here more often, usually about problems that annoyed me enough to understand them properly.',
+    ],
+  },
+  {
+    title: 'Learning',
+    points: [
+      'Keeping up with web security research, and the steady trickle of new HTTP and browser features that quietly change what you have to defend against.',
+      'Learning to incorporate AI into my work, and how to use it responsibly without producing slop.',
     ],
   },
   {
     title: 'Away from the keyboard',
     points: [
-      'Running my home server and letting it teach me things production never would.',
-      'Reading, and trying to protect the deep-focus time that good engineering needs.',
+      'Reading, and trying to spend less of my life looking at screens than my job would suggest. Currently finishing "Born to Run" by Christopher McDougall. Heading next into "Ulysses" by James Joyce.',
+      'Working out and running to stay fit and healthy.',
     ],
   },
 ];
