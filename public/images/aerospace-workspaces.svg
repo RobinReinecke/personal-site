@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" role="img" aria-labelledby="title description">
+  <title id="title">My AeroSpace workspace layout</title>
+  <desc id="description">Holding control and option plus a letter jumps to the workspace of one app: T for the terminal, C for VS Code, I for IntelliJ, B for the browser, M for messaging and D for Docker. The digits 1 to 5 are scratch workspaces. Adding shift moves the focused window to that workspace instead.</desc>
+  <rect x="1" y="1" width="878" height="428" rx="18" fill="#f8fbfa" stroke="#d4e3de" stroke-width="2" />
+  <text x="40" y="48" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" letter-spacing="1">CTRL + ALT + KEY: ONE WORKSPACE PER APP</text>
+  <rect x="40" y="70" width="120" height="110" rx="14" fill="#e7f7f1" stroke="#77bfae" stroke-width="2" />
+  <rect x="46" y="76" width="108" height="72" rx="10" fill="#ffffff" stroke="#77bfae" stroke-width="1" />
+  <text x="100" y="126" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">T</text>
+  <text x="100" y="169" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">Ghostty</text>
+  <rect x="176" y="70" width="120" height="110" rx="14" fill="#e7f7f1" stroke="#77bfae" stroke-width="2" />
+  <rect x="182" y="76" width="108" height="72" rx="10" fill="#ffffff" stroke="#77bfae" stroke-width="1" />
+  <text x="236" y="126" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">C</text>
+  <text x="236" y="169" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">VS Code</text>
+  <rect x="312" y="70" width="120" height="110" rx="14" fill="#e7f7f1" stroke="#77bfae" stroke-width="2" />
+  <rect x="318" y="76" width="108" height="72" rx="10" fill="#ffffff" stroke="#77bfae" stroke-width="1" />
+  <text x="372" y="126" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">I</text>
+  <text x="372" y="169" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">IntelliJ</text>
+  <rect x="448" y="70" width="120" height="110" rx="14" fill="#e7f7f1" stroke="#77bfae" stroke-width="2" />
+  <rect x="454" y="76" width="108" height="72" rx="10" fill="#ffffff" stroke="#77bfae" stroke-width="1" />
+  <text x="508" y="126" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">B</text>
+  <text x="508" y="169" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">Brave</text>
+  <rect x="584" y="70" width="120" height="110" rx="14" fill="#e7f7f1" stroke="#77bfae" stroke-width="2" />
+  <rect x="590" y="76" width="108" height="72" rx="10" fill="#ffffff" stroke="#77bfae" stroke-width="1" />
+  <text x="644" y="126" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">M</text>
+  <text x="644" y="169" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">Teams, Outlook</text>
+  <rect x="720" y="70" width="120" height="110" rx="14" fill="#e7f7f1" stroke="#77bfae" stroke-width="2" />
+  <rect x="726" y="76" width="108" height="72" rx="10" fill="#ffffff" stroke="#77bfae" stroke-width="1" />
+  <text x="780" y="126" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">D</text>
+  <text x="780" y="169" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">Docker</text>
+  <text x="40" y="232" fill="#49645d" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" letter-spacing="1">CTRL + ALT + DIGIT: SCRATCH SPACE FOR EVERYTHING ELSE</text>
+  <rect x="40" y="254" width="120" height="110" rx="14" fill="#ffffff" stroke="#9db8b0" stroke-width="2" />
+  <rect x="46" y="260" width="108" height="72" rx="10" fill="#ffffff" stroke="#9db8b0" stroke-width="1" />
+  <text x="100" y="310" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">1</text>
+  <text x="100" y="353" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">scratch</text>
+  <rect x="176" y="254" width="120" height="110" rx="14" fill="#ffffff" stroke="#9db8b0" stroke-width="2" />
+  <rect x="182" y="260" width="108" height="72" rx="10" fill="#ffffff" stroke="#9db8b0" stroke-width="1" />
+  <text x="236" y="310" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">2</text>
+  <text x="236" y="353" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">scratch</text>
+  <rect x="312" y="254" width="120" height="110" rx="14" fill="#ffffff" stroke="#9db8b0" stroke-width="2" />
+  <rect x="318" y="260" width="108" height="72" rx="10" fill="#ffffff" stroke="#9db8b0" stroke-width="1" />
+  <text x="372" y="310" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">3</text>
+  <text x="372" y="353" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">scratch</text>
+  <rect x="448" y="254" width="120" height="110" rx="14" fill="#ffffff" stroke="#9db8b0" stroke-width="2" />
+  <rect x="454" y="260" width="108" height="72" rx="10" fill="#ffffff" stroke="#9db8b0" stroke-width="1" />
+  <text x="508" y="310" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">4</text>
+  <text x="508" y="353" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">scratch</text>
+  <rect x="584" y="254" width="120" height="110" rx="14" fill="#ffffff" stroke="#9db8b0" stroke-width="2" />
+  <rect x="590" y="260" width="108" height="72" rx="10" fill="#ffffff" stroke="#9db8b0" stroke-width="1" />
+  <text x="644" y="310" text-anchor="middle" fill="#173d36" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">5</text>
+  <text x="644" y="353" text-anchor="middle" fill="#23584c" font-family="Arial, Helvetica, sans-serif" font-size="15">scratch</text>
+  <text x="40" y="404" fill="#49645d" font-family="Arial, Helvetica, sans-serif" font-size="16">Add shift to any of these and the focused window moves there instead of you.</text>
+</svg>

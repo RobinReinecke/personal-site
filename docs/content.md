@@ -39,3 +39,30 @@ are ordered by `date` (oldest first), so publishing a new post in the series slo
 renumbers automatically. Only non-draft posts appear, so a `draft: true` future part stays hidden
 until it ships. The `series` value is shown to readers verbatim, so write it as a display name
 (e.g. `Home Server`).
+
+## Images, diagrams and memes
+
+Posts should not be a wall of text. Images live in [public/images/](../public/images/) and are
+referenced by absolute path (`/images/...`).
+
+- **Diagrams:** hand-written SVGs (e.g. `home-server-gpu-path.svg`) with `<title>`/`<desc>` for
+  accessibility. Embed with plain Markdown image syntax and a descriptive alt text.
+- **Memes and photos with a caption:** use a raw HTML `<figure>` in the Markdown. The caption goes
+  in `<figcaption>`, never baked into the image. Meme templates live in
+  [public/images/memes/](../public/images/memes/) (blank templates from imgflip). Set `width` and
+  `height` (the rendered size, keeping the aspect ratio) and `loading="lazy"`:
+
+  ```html
+  <figure>
+    <img
+      src="/images/memes/this-is-fine.jpg"
+      alt="Describe the image itself."
+      width="580"
+      height="282"
+      loading="lazy"
+    />
+    <figcaption>The joke goes here.</figcaption>
+  </figure>
+  ```
+
+  Figures and captions are centered by [Prose.astro](../src/components/site/Prose.astro).
