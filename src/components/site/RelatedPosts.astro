@@ -27,27 +27,25 @@ const formatDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
-{
-  related.length > 0 && (
-    <section aria-label="Related posts" class="mt-16 border-t border-border pt-10">
-      <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-        Related posts
-      </h2>
-      <ul class="mt-6 flex flex-col gap-5">
-        {related.map((item) => {
-          const slug = item.data.slug ?? item.id;
-          return (
-            <li>
-              <a href={`/blog/${slug}`} class="group block">
-                <p class="text-sm text-muted-foreground">{formatDate(item.data.date)}</p>
-                <p class="mt-0.5 font-medium transition-colors group-hover:text-brand">
-                  {item.data.title}
-                </p>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
-  )
-}
+{related.length > 0 && (
+  <section aria-label="Related posts" class="mt-16 border-t border-border pt-10">
+    <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+      Related posts
+    </h2>
+    <ul class="mt-6 flex flex-col gap-5">
+      {related.map((item) => {
+        const slug = item.data.slug ?? item.id;
+        return (
+          <li>
+            <a href={`/blog/${slug}`} class="group block">
+              <p class="text-sm text-muted-foreground">{formatDate(item.data.date)}</p>
+              <p class="mt-0.5 font-medium transition-colors group-hover:text-brand">
+                {item.data.title}
+              </p>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </section>
+)}

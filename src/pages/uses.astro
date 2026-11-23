@@ -60,31 +60,30 @@ const categories = [
       Uses<span class="text-brand">.</span>
     </h1>
     <p class="mt-2 max-w-2xl text-muted-foreground">
-      The tools I reach for every day. Inspired by <a
-        href="https://uses.tech"
-        class="link-underline text-brand">uses.tech</a
-      >.
+      The tools I reach for every day. Inspired by{' '}
+      <a href="https://uses.tech" class="link-underline text-brand">
+        uses.tech
+      </a>
+      .
     </p>
   </header>
 
   <Separator class="my-10" />
 
   <div class="flex flex-col gap-8">
-    {
-      categories.map((category) => (
-        <section>
-          <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-            {category.title}
-          </h2>
-          <ul class="mt-3 flex flex-col gap-2 text-muted-foreground">
-            {category.items.map((item) => (
-              <li>
-                <span class="font-medium text-foreground">{item.name}</span> - {item.note}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))
-    }
+    {categories.map((category) => (
+      <section>
+        <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+          {category.title}
+        </h2>
+        <ul class="mt-3 flex flex-col gap-2 text-muted-foreground">
+          {category.items.map((item) => (
+            <li>
+              <span class="font-medium text-foreground">{item.name}</span> - {item.note}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
   </div>
 </BaseLayout>

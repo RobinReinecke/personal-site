@@ -7,15 +7,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     404<span class="text-brand">.</span>
   </h1>
   <p class="mt-4 text-muted-foreground">
-    This page took a wrong turn. While you're here, catch the dot — or just <a
-      href="/"
-      class="link-underline text-brand">go home</a
-    >.
+    This page took a wrong turn. While you're here, catch the dot — or just{' '}
+    <a href="/" class="link-underline text-brand">
+      go home
+    </a>
+    .
   </p>
 
   <div class="mt-8">
     <div class="flex items-center justify-between text-sm text-muted-foreground">
-      <p>Score: <span id="snake-score" class="font-mono text-foreground">0</span></p>
+      <p>
+        Score:{' '}
+        <span id="snake-score" class="font-mono text-foreground">
+          0
+        </span>
+      </p>
       <p class="hidden sm:block">Arrow keys / WASD to move</p>
     </div>
 
@@ -24,13 +30,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         id="snake-canvas"
         width="420"
         height="420"
-        class="aspect-square w-full rounded-lg border border-border bg-card"></canvas>
+        class="aspect-square w-full rounded-lg border border-border bg-card"
+      ></canvas>
 
       <div
         id="snake-overlay"
         class="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-lg bg-background/70 backdrop-blur-sm"
       >
-        <p id="snake-message" class="text-lg font-semibold">Lost? Play a round.</p>
+        <p id="snake-message" class="text-lg font-semibold">
+          Lost? Play a round.
+        </p>
         <button
           id="snake-start"
           type="button"
