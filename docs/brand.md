@@ -68,6 +68,10 @@ with the client's palette). Then:
 
 - Replace `CLIENT` in `?utm_source=CLIENT&utm_medium=credit` with a short client slug. Umami
   groups these in its UTM report, so you can see which client site sends visitors.
+- Optional easter egg: also copy the `<style>` block from the top of the file and the otter wiggles
+  its head when the credit is hovered or focused (skipped for `prefers-reduced-motion`). It hooks
+  onto the `rr-credit` class; a `title="The otter says hi"` on the link makes a nice hint. Class
+  and keyframe names are `rr-` prefixed so they don't clash with the client's CSS.
 - Ship the SVG inline (as the snippet does), never hotlinked from robinreinecke.de: hotlinked
   credits break when this site changes, and every client page view would hit this server.
 - Keep the link text your name. Keyword-rich footer links spread across many sites count as link

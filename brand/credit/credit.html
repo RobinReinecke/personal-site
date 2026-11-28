@@ -2,7 +2,9 @@
 <!--
   Footer credit for client websites. Copy ONE of the two snippets between the
   "copy" markers into the client's footer, then replace CLIENT in the link with a
-  short slug for the client (e.g. baeckerei-mueller). Usage notes: docs/brand.md.
+  short slug for the client (e.g. baeckerei-mueller). Optionally also copy the
+  easter-egg <style> below, which makes the otter wiggle on hover/focus.
+  Usage notes: docs/brand.md.
   Open this file in a browser to preview both variants on light and dark footers.
 -->
 <html lang="en">
@@ -35,12 +37,43 @@
         color: #9aa5a2;
       }
     </style>
+    <!-- copy (optional): easter egg, the otter wiggles its head when you point at the
+         credit. Add it to the page's CSS; pair it with title="The otter says hi" on the
+         link as a hint. -->
+    <style>
+      .rr-credit svg {
+        transform-origin: 50% 80%;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .rr-credit:hover svg,
+        .rr-credit:focus-visible svg {
+          animation: rr-otter-wiggle 0.7s ease-in-out;
+        }
+      }
+      @keyframes rr-otter-wiggle {
+        0%,
+        100% {
+          transform: rotate(0);
+        }
+        20% {
+          transform: rotate(-14deg);
+        }
+        45% {
+          transform: rotate(12deg);
+        }
+        70% {
+          transform: rotate(-8deg);
+        }
+      }
+    </style>
+    <!-- /copy -->
   </head>
   <body>
     <footer class="light">
       <span>Colour badge</span>
       <!-- copy: colour badge -->
       <a
+        class="rr-credit"
         href="https://robinreinecke.de/?utm_source=CLIENT&utm_medium=credit"
         style="
           display: inline-flex;
@@ -98,6 +131,7 @@
       <span>One colour (follows the footer's text colour)</span>
       <!-- copy: one colour -->
       <a
+        class="rr-credit"
         href="https://robinreinecke.de/?utm_source=CLIENT&utm_medium=credit"
         style="
           display: inline-flex;
