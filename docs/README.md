@@ -16,6 +16,7 @@ bug.
 - [features.md](features.md) — Interactive features (command palette, terminal, blog enhancements) and how to keep them in sync.
 - [seo.md](seo.md) — SEO meta, structured data, OG image generation, sitemap.
 - [styling.md](styling.md) — Tailwind, the `cn()` helper, and component conventions.
+- [brand.md](brand.md) — The otter logo, brand assets and exports, and the client-site credit snippet.
 - [deployment.md](deployment.md) — Docker build, Caddy runtime, Umami analytics.
 - [social-cross-posting.md](social-cross-posting.md) — The dev.to / LinkedIn / X pipeline.
 - [testing.md](testing.md) — Testing policy and how to add a runner.

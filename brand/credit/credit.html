@@ -1,0 +1,156 @@
+<!doctype html>
+<!--
+  Footer credit for client websites. Copy ONE of the two snippets between the
+  "copy" markers into the client's footer, then replace CLIENT in the link with a
+  short slug for the client (e.g. baeckerei-mueller). Usage notes: docs/brand.md.
+  Open this file in a browser to preview both variants on light and dark footers.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Credit snippet preview</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 32px;
+        font:
+          14px/1.5 system-ui,
+          sans-serif;
+        display: grid;
+        gap: 16px;
+      }
+      footer {
+        padding: 18px 22px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .light {
+        background: #fff;
+        color: #555;
+        border: 1px solid #e5e7e6;
+      }
+      .dark {
+        background: #101413;
+        color: #9aa5a2;
+      }
+    </style>
+  </head>
+  <body>
+    <footer class="light">
+      <span>Colour badge</span>
+      <!-- copy: colour badge -->
+      <a
+        href="https://robinreinecke.de/?utm_source=CLIENT&utm_medium=credit"
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4em;
+          color: inherit;
+          text-decoration: none;
+        "
+      >
+        <svg
+          viewBox="0 0 128 128"
+          aria-hidden="true"
+          style="width: 1.5em; height: 1.5em; flex-shrink: 0"
+        >
+          <circle cx="64" cy="64" r="64" fill="#1a9d8b" />
+          <g transform="translate(0,-6)">
+            <circle cx="25" cy="58" r="8" fill="#6b4226" />
+            <circle cx="103" cy="58" r="8" fill="#6b4226" />
+            <circle cx="25" cy="58" r="3.5" fill="#3d2414" />
+            <circle cx="103" cy="58" r="3.5" fill="#3d2414" />
+            <ellipse cx="64" cy="72" rx="44" ry="32" fill="#8b5a34" />
+            <ellipse cx="64" cy="84" rx="34" ry="19" fill="#c08a5a" />
+            <ellipse cx="52" cy="87" rx="14" ry="10.5" fill="#f1dfc4" />
+            <ellipse cx="76" cy="87" rx="14" ry="10.5" fill="#f1dfc4" />
+            <circle cx="45" cy="65" r="5.2" fill="#1d120a" />
+            <circle cx="83" cy="65" r="5.2" fill="#1d120a" />
+            <circle cx="46.8" cy="63.2" r="1.7" fill="#fff" />
+            <circle cx="84.8" cy="63.2" r="1.7" fill="#fff" />
+            <path d="M55 77 Q64 72 73 77 Q71 83.5 64 84.5 Q57 83.5 55 77Z" fill="#1d120a" />
+            <path
+              d="M64 84.5 V87.5 Q59.5 92.5 55 89 M64 87.5 Q68.5 92.5 73 89"
+              stroke="#1d120a"
+              stroke-width="2.2"
+              fill="none"
+              stroke-linecap="round"
+            />
+            <path
+              d="M40 85 L14 80 M40 89 L13 90 M41 93 L16 99 M88 85 L114 80 M88 89 L115 90 M87 93 L112 99"
+              stroke="#f1dfc4"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </g>
+        </svg>
+        Website by Robin Reinecke
+      </a>
+      <!-- /copy -->
+    </footer>
+
+    <footer class="dark">
+      <span>Colour badge</span>
+    </footer>
+
+    <footer class="light">
+      <span>One colour (follows the footer's text colour)</span>
+      <!-- copy: one colour -->
+      <a
+        href="https://robinreinecke.de/?utm_source=CLIENT&utm_medium=credit"
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4em;
+          color: inherit;
+          text-decoration: none;
+        "
+      >
+        <svg
+          viewBox="0 0 128 128"
+          fill="currentColor"
+          aria-hidden="true"
+          style="width: 1.5em; height: 1.5em; flex-shrink: 0"
+        >
+          <mask id="rr-credit-otter-cut" fill="#000">
+            <rect width="128" height="128" fill="#fff" />
+            <circle cx="45" cy="59" r="5.2" />
+            <circle cx="83" cy="59" r="5.2" />
+            <ellipse cx="52" cy="81" rx="14" ry="10.5" />
+            <ellipse cx="76" cy="81" rx="14" ry="10.5" />
+          </mask>
+          <g mask="url(#rr-credit-otter-cut)">
+            <circle cx="25" cy="52" r="8" />
+            <circle cx="103" cy="52" r="8" />
+            <ellipse cx="64" cy="66" rx="44" ry="32" />
+          </g>
+          <path d="M55 71 Q64 66 73 71 Q71 77.5 64 78.5 Q57 77.5 55 71Z" />
+          <g fill="none" stroke="currentColor" stroke-linecap="round">
+            <path
+              d="M64 78.5 V81.5 Q59.5 86.5 55 83 M64 81.5 Q68.5 86.5 73 83"
+              stroke-width="2.6"
+            />
+            <path
+              d="M26 79 L8 74 M29 84 L8 86 M35 89 L12 96 M102 79 L120 74 M99 84 L120 86 M93 89 L116 96"
+              stroke-width="2.4"
+            />
+          </g>
+        </svg>
+        Website by Robin Reinecke
+      </a>
+      <!-- /copy -->
+    </footer>
+
+    <footer class="dark">
+      <span>One colour (follows the footer's text colour)</span>
+    </footer>
+
+    <script>
+      // Preview each snippet on a dark footer too.
+      document.querySelectorAll('footer.light').forEach((light) => {
+        light.nextElementSibling.append(light.querySelector('a').cloneNode(true));
+      });
+    </script>
+  </body>
+</html>

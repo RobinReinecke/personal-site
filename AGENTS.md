@@ -30,6 +30,8 @@ pnpm lint           # ESLint (flat config, TS + Astro)
 pnpm lint:fix       # ESLint with autofix
 pnpm format         # Prettier write (Astro + Tailwind class-sorting plugins)
 pnpm format:check   # Prettier check (used in CI)
+
+pnpm brand:export   # re-render brand PNGs + favicons after editing brand/svg/
 ```
 
 Dev server in background mode (preferred for agents): `astro dev --background` — manage with
@@ -45,6 +47,7 @@ Read the relevant file in [docs/](docs/README.md) before working on a task:
 - [docs/features.md](docs/features.md) — interactive features (command palette, terminal, blog enhancements) and how to keep them in sync when adding pages.
 - [docs/seo.md](docs/seo.md) — SEO meta, structured data, OG images, sitemap.
 - [docs/styling.md](docs/styling.md) — Tailwind, `cn()`, component conventions.
+- [docs/brand.md](docs/brand.md) — the otter logo, brand assets, and the client-site credit snippet.
 - [docs/deployment.md](docs/deployment.md) — Docker, Caddy, Umami, CI.
 - [docs/social-cross-posting.md](docs/social-cross-posting.md) — the dev.to / LinkedIn / X pipeline.
 - [docs/testing.md](docs/testing.md) — testing policy and how to add a runner.

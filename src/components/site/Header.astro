@@ -7,9 +7,45 @@ const currentPath = Astro.url.pathname;
 
 <header class="border-b border-border">
   <nav class="mx-auto flex max-w-2xl items-center justify-between px-4 py-6">
-    <a href="/" class="group flex items-center text-sm font-semibold tracking-tight">
-      {SITE_TITLE}
-      <span class="text-brand transition-transform group-hover:scale-125">.</span>
+    <a href="/" class="group flex items-center gap-2 text-sm font-semibold tracking-tight">
+      <!-- Otter logo (brand/svg/otter-r.svg); the R follows the theme's brand colour and the
+           otter peeks up a little further on hover. -->
+      <svg viewBox="0 0 128 128" aria-hidden="true" class="h-8 w-8 shrink-0">
+        <g transform="translate(-5.3,-22.6) scale(1.1)">
+          <g class="transition-transform group-hover:-translate-y-[10px]">
+            <g transform="translate(25.6,4) scale(.6)">
+              <circle cx="25" cy="58" r="8" fill="#6b4226"></circle>
+              <circle cx="103" cy="58" r="8" fill="#6b4226"></circle>
+              <circle cx="25" cy="58" r="3.5" fill="#3d2414"></circle>
+              <circle cx="103" cy="58" r="3.5" fill="#3d2414"></circle>
+              <ellipse cx="64" cy="72" rx="44" ry="32" fill="#8b5a34"></ellipse>
+              <ellipse cx="64" cy="84" rx="34" ry="19" fill="#c08a5a"></ellipse>
+              <ellipse cx="52" cy="87" rx="14" ry="10.5" fill="#f1dfc4"></ellipse>
+              <ellipse cx="76" cy="87" rx="14" ry="10.5" fill="#f1dfc4"></ellipse>
+              <circle cx="45" cy="65" r="5.2" fill="#1d120a"></circle>
+              <circle cx="83" cy="65" r="5.2" fill="#1d120a"></circle>
+              <circle cx="46.8" cy="63.2" r="1.7" fill="#fff"></circle>
+              <circle cx="84.8" cy="63.2" r="1.7" fill="#fff"></circle>
+              <path d="M55 77 Q64 72 73 77 Q71 83.5 64 84.5 Q57 83.5 55 77Z" fill="#1d120a"></path>
+            </g>
+          </g>
+          <path
+            d="M34 122 V60 H72 A20 20 0 0 1 72 100 H34 M66 100 L92 122"
+            class="text-brand"
+            stroke="currentColor"
+            stroke-width="15"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
+          <ellipse cx="50" cy="58" rx="7" ry="5.5" fill="#6b4226"></ellipse>
+          <ellipse cx="78" cy="58" rx="7" ry="5.5" fill="#6b4226"></ellipse>
+        </g>
+      </svg>
+      <span class="flex">
+        {SITE_TITLE}
+        <span class="text-brand transition-transform group-hover:scale-125">.</span>
+      </span>
     </a>
     <div class="flex items-center gap-6">
       <ul class="flex gap-6 text-sm text-muted-foreground">

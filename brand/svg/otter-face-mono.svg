@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="currentColor">
+  <mask id="rr-otter-face-mono-cut" fill="#000">
+    <rect width="128" height="128" fill="#fff"/>
+    <circle cx="45" cy="59" r="5.2"/>
+    <circle cx="83" cy="59" r="5.2"/>
+    <ellipse cx="52" cy="81" rx="14" ry="10.5"/>
+    <ellipse cx="76" cy="81" rx="14" ry="10.5"/>
+  </mask>
+  <g mask="url(#rr-otter-face-mono-cut)">
+    <circle cx="25" cy="52" r="8"/>
+    <circle cx="103" cy="52" r="8"/>
+    <ellipse cx="64" cy="66" rx="44" ry="32"/>
+  </g>
+  <path d="M55 71 Q64 66 73 71 Q71 77.5 64 78.5 Q57 77.5 55 71Z"/>
+  <g fill="none" stroke="currentColor" stroke-linecap="round">
+    <path d="M64 78.5 V81.5 Q59.5 86.5 55 83 M64 81.5 Q68.5 86.5 73 83" stroke-width="2.6"/>
+    <path d="M26 79 L8 74 M29 84 L8 86 M35 89 L12 96 M102 79 L120 74 M99 84 L120 86 M93 89 L116 96" stroke-width="2.4"/>
+  </g>
+</svg>

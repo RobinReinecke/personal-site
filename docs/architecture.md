@@ -42,7 +42,9 @@ src/
     rss.xml.ts                    # RSS feed.
   styles/global.css    # Tailwind entry + global styles.
 scripts/social/        # Node/tsx scripts for the social cross-posting pipeline.
-public/                # Static passthrough assets (e.g. robots.txt).
+scripts/brand/         # `pnpm brand:export`: renders brand SVGs to PNGs/favicons.
+brand/                 # Logo source SVGs, exported PNGs, client credit snippet. See brand.md.
+public/                # Static passthrough assets (robots.txt, favicons, apple-touch-icon).
 astro.config.mjs       # Integrations: mdx, react, sitemap (filters out /og/*).
 Dockerfile             # Multi-stage: pnpm build -> Caddy runtime serving /srv.
 docker-compose.yml     # Site + Umami analytics + Postgres.
